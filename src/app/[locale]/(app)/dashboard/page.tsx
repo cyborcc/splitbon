@@ -7,7 +7,7 @@ import { formatCents } from '@/lib/money';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { ArrowUpRight, ArrowDownLeft, Plus, ChevronRight, TrendingUp, TrendingDown } from 'lucide-react';
+import { Plus, ChevronRight, TrendingUp, TrendingDown } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
 import { OpenClaims } from '@/components/receipts/open-claims';
 import { UserAvatar } from '@/components/ui/user-avatar';
@@ -109,7 +109,7 @@ export default function DashboardPage() {
 
       {/* ---- Balance summary cards ---- */}
       <div className="grid gap-4 @2xl:grid-cols-2">
-        {/* You are owed */}
+        {/* You are owed: total and the people behind it */}
         <Card className="relative overflow-hidden border-green-200/40 bg-gradient-to-br from-green-50/60 to-card dark:border-green-900/30 dark:from-green-950/30 dark:to-card">
           <div className="pointer-events-none absolute -right-4 -top-4 h-24 w-24 rounded-full bg-green-500/5 dark:bg-green-400/5" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
@@ -118,7 +118,7 @@ export default function DashboardPage() {
               <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-3">
             {dashboard.data ? (
               hasMixedCurrencies ? (
                 <span className="text-lg font-medium text-muted-foreground">{t('mixedCurrencies')}</span>
@@ -130,52 +130,11 @@ export default function DashboardPage() {
             ) : (
               <SummarySkeleton />
             )}
-          </CardContent>
-        </Card>
-
-        {/* You owe */}
-        <Card className="relative overflow-hidden border-red-200/40 bg-gradient-to-br from-red-50/60 to-card dark:border-red-900/30 dark:from-red-950/30 dark:to-card">
-          <div className="pointer-events-none absolute -right-4 -top-4 h-24 w-24 rounded-full bg-red-500/5 dark:bg-red-400/5" />
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
-            <CardTitle className="text-sm font-medium text-muted-foreground">{t('youOwe')}</CardTitle>
-            <div className="hidden h-8 w-8 items-center justify-center rounded-full bg-red-100 sm:flex dark:bg-red-900/40">
-              <TrendingDown className="h-4 w-4 text-red-600 dark:text-red-400" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            {dashboard.data ? (
-              hasMixedCurrencies ? (
-                <span className="text-lg font-medium text-muted-foreground">{t('mixedCurrencies')}</span>
-              ) : (
-                <span className="text-3xl font-bold tracking-tight tabular-nums text-red-600 dark:text-red-400">
-                  {formatCents(dashboard.data.totalOwing, aggregateCurrency, locale)}
-                </span>
-              )
-            ) : (
-              <SummarySkeleton />
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* ---- Per-person debt cards ---- */}
-      <div className="grid gap-4 @2xl:grid-cols-2">
-        {/* People who owe you */}
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-sm font-medium">
-              <ArrowDownLeft className="h-4 w-4 text-green-600 dark:text-green-400" />
-              {t('owedToYouTitle')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {/* Cross-currency nets are not meaningful — even the owed/owes
-                classification can be wrong — so suppress the rows entirely
-                and point at per-group balances instead. */}
+            {/* Cross-currency nets are not meaningful, so the rows are suppressed and per-group balances are the pointer. */}
             {hasMixedCurrencies ? (
-              <p className="py-3 text-center text-sm text-muted-foreground">{t('mixedCurrenciesDebts')}</p>
+              <p className="py-1 text-sm text-muted-foreground">{t('mixedCurrenciesDebts')}</p>
             ) : (
-              <>
+              <div className="border-t border-border/60 pt-1">
                 {overallDebts.isLoading && (
                   <div className="divide-y divide-border/60">
                     {[0, 1, 2].map((i) => (
@@ -207,24 +166,40 @@ export default function DashboardPage() {
                     </div>
                   ))}
                 </div>
-              </>
+              </div>
             )}
           </CardContent>
         </Card>
 
-        {/* People you owe */}
-        <Card data-testid="you-owe-section">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-sm font-medium">
-              <ArrowUpRight className="h-4 w-4 text-red-600 dark:text-red-400" />
-              {t('youOweTitle')}
-            </CardTitle>
+        {/* You owe: total and the people behind it */}
+        <Card
+          data-testid="you-owe-section"
+          className="relative overflow-hidden border-red-200/40 bg-gradient-to-br from-red-50/60 to-card dark:border-red-900/30 dark:from-red-950/30 dark:to-card"
+        >
+          <div className="pointer-events-none absolute -right-4 -top-4 h-24 w-24 rounded-full bg-red-500/5 dark:bg-red-400/5" />
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t('youOwe')}</CardTitle>
+            <div className="hidden h-8 w-8 items-center justify-center rounded-full bg-red-100 sm:flex dark:bg-red-900/40">
+              <TrendingDown className="h-4 w-4 text-red-600 dark:text-red-400" />
+            </div>
           </CardHeader>
-          <CardContent>
-            {hasMixedCurrencies ? (
-              <p className="py-3 text-center text-sm text-muted-foreground">{t('mixedCurrenciesDebts')}</p>
+          <CardContent className="space-y-3">
+            {dashboard.data ? (
+              hasMixedCurrencies ? (
+                <span className="text-lg font-medium text-muted-foreground">{t('mixedCurrencies')}</span>
+              ) : (
+                <span className="text-3xl font-bold tracking-tight tabular-nums text-red-600 dark:text-red-400">
+                  {formatCents(dashboard.data.totalOwing, aggregateCurrency, locale)}
+                </span>
+              )
             ) : (
-              <>
+              <SummarySkeleton />
+            )}
+            {/* Cross-currency nets are not meaningful, so the rows are suppressed and per-group balances are the pointer. */}
+            {hasMixedCurrencies ? (
+              <p className="py-1 text-sm text-muted-foreground">{t('mixedCurrenciesDebts')}</p>
+            ) : (
+              <div className="border-t border-border/60 pt-1">
                 {overallDebts.isLoading && (
                   <div className="divide-y divide-border/60">
                     {[0, 1, 2].map((i) => (
@@ -256,7 +231,7 @@ export default function DashboardPage() {
                     </div>
                   ))}
                 </div>
-              </>
+              </div>
             )}
           </CardContent>
         </Card>
