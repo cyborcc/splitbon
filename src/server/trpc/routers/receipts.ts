@@ -338,7 +338,18 @@ export const receiptsRouter = createTRPCRouter({
         group.currency.toUpperCase() === 'EUR'
           ? euro
           : await getReceiptRate(data, group.currency, input.useLatestRate, ctx.db);
-      return { euro, groupRate, currency: data.currency, receiptDate: data.date?.slice(0, 10) ?? null };
+      // Display-only fallback: when the receipt day has no rate (e.g. EGP is not in the ECB set and
+      // the open API only has today's rate), show amounts with today's rate as a rough estimate.
+      // Saving still needs groupRate (or the user's explicit consent to the latest rate).
+      const groupEstimate =
+        groupRate ?? (input.useLatestRate ? null : await getReceiptRate(data, group.currency, true, ctx.db));
+      return {
+        euro,
+        groupRate,
+        groupEstimate,
+        currency: data.currency,
+        receiptDate: data.date?.slice(0, 10) ?? null,
+      };
     }),
 
   correctCurrency: protectedProcedure
@@ -1428,9 +1439,27 @@ export const receiptsRouter = createTRPCRouter({
       orderBy: { createdAt: 'desc' },
     });
 
+    const group = await ctx.db.group.findUniqueOrThrow({ where: { id: input.groupId }, select: { currency: true } });
+    // Total in the group currency (rough, today's rate when the receipt day has none), for foreign receipts only
+    const groupTotals = new Map<string, number | null>();
+    for (const r of receipts) {
+      try {
+        const data = parseExtractedData(r.extractedData);
+        if (!data.currency || data.currency.toUpperCase() === group.currency.toUpperCase()) continue;
+        const quote =
+          (await getReceiptRate(data, group.currency, false, ctx.db)) ??
+          (await getReceiptRate(data, group.currency, true, ctx.db));
+        groupTotals.set(r.id, quote ? Math.round(data.total * quote.rate) : null);
+      } catch {
+        // malformed extracted data: show the receipt without a converted total
+      }
+    }
+
     return receipts.map((r) => ({
       id: r.id,
       createdAt: r.createdAt,
+      groupCurrency: group.currency,
+      groupTotal: groupTotals.get(r.id) ?? null,
       extractedData: r.extractedData as {
         merchantName?: string;
         merchantAddress?: string;

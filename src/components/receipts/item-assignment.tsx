@@ -507,7 +507,9 @@ export function ItemAssignment({
   const chargedOk = charged > 0 && currentTotal > 0;
   // Rate used to show amounts in the group currency: the card's if entered, else the reference rate
   const chargedRate = chargedOk ? charged / currentTotal : null;
-  const shownRate = chargedRate ?? (foreignReceipt ? (groupQuote?.rate ?? null) : null);
+  // Without a rate for the receipt day, today's rate still gives a rough "≈" (display only)
+  const groupEstimate = previewReady ? conversionPreview.data?.groupEstimate : null;
+  const shownRate = chargedRate ?? (foreignReceipt ? (groupQuote?.rate ?? groupEstimate?.rate ?? null) : null);
   const rateReady = chargedOk || (previewReady && !!groupQuote);
   const formatRate = (rate: number) => rate.toLocaleString(locale, { maximumSignificantDigits: 4 });
 

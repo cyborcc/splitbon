@@ -548,9 +548,18 @@ export default function GroupDetailPage({ params }: { params: Promise<{ groupId:
                     </p>
                   </Link>
                   <div className="flex items-center gap-3 ml-3">
-                    <p className="text-lg font-semibold">
-                      {r.extractedData ? formatCents(r.extractedData.total, g.currency, locale) : '—'}
-                    </p>
+                    <div className="text-right">
+                      <p className="text-lg font-semibold" data-testid="pending-receipt-total">
+                        {r.extractedData
+                          ? formatCents(r.extractedData.total, r.extractedData.currency || g.currency, locale)
+                          : '—'}
+                      </p>
+                      {r.groupTotal !== null && (
+                        <p className="text-xs text-muted-foreground" data-testid="pending-receipt-group-total">
+                          ≈ {formatCents(r.groupTotal, r.groupCurrency, locale)}
+                        </p>
+                      )}
+                    </div>
                     <button
                       type="button"
                       className="text-muted-foreground hover:text-destructive transition-colors p-1"

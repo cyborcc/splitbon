@@ -40,7 +40,7 @@ export default function ClaimReceiptPage({ params }: { params: Promise<{ groupId
     { groupId, receiptId },
     { enabled: foreign, staleTime: 60_000 },
   );
-  const rate = foreign ? (conversion.data?.groupRate?.rate ?? null) : null;
+  const rate = foreign ? (conversion.data?.groupRate?.rate ?? conversion.data?.groupEstimate?.rate ?? null) : null;
 
   const setClaim = trpc.receipts.setClaim.useMutation({
     onMutate: async ({ receiptItemId, claimed, units }) => {
