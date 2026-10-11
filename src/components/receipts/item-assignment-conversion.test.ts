@@ -17,6 +17,7 @@ vi.mock('next-intl', () => ({
 }));
 vi.mock('@/components/expenses/location-field', () => ({ LocationField: () => null }));
 vi.mock('@/components/expenses/category-select', () => ({ CategorySelect: () => null }));
+vi.mock('@/i18n/navigation', () => ({ Link: () => null }));
 vi.mock('@/lib/trpc', () => ({
   trpc: {
     useUtils: () => ({
@@ -31,6 +32,7 @@ vi.mock('@/lib/trpc', () => ({
       getReceiptItems: { useQuery: mocks.receiptQuery },
       getConversionPreview: { useQuery: mocks.previewQuery },
       history: { useQuery: () => ({ data: [] }) },
+      getClaims: { useQuery: () => ({ data: undefined }) },
       correctCurrency: { useMutation: mocks.correction },
       ...Object.fromEntries(
         ['assignItemsAndCreateExpense', 'updateItem', 'deleteItem', 'addItem', 'splitItem', 'saveForLater'].map(
