@@ -263,7 +263,9 @@
     "title": "Välj dina poster",
     "intro": "Tryck på allt du hade från ”{merchant}”. Delade ni något trycker båda på det.",
     "introBy": "{name} skannade ”{merchant}”. Tryck på allt du hade; delade ni något trycker båda på det.",
-    "receipt": "kvittot",
+    "introNoName": "Tryck på allt du hade. Delade ni något trycker ni båda.",
+    "introByNoName": "{name} skannade ett kvitto. Tryck på allt du hade. Delade ni något trycker ni båda.",
+    "receiptFallback": "Kvitto",
     "backToGroup": "Tillbaka till gruppen",
     "booked": "Det här kvittot är redan bokfört.",
     "openExpense": "Visa utgift",
@@ -294,6 +296,8 @@
     "todoView": "Visa",
     "todoAllPicked": "Allt valt, redo att bokföras",
     "pickingLabel": "Väljer just nu:",
-    "notStartedLabel": "Inte börjat:"
+    "notStartedLabel": "Inte börjat:",
+    "showReceipt": "Visa kvittofoto",
+    "receiptImageAlt": "Kvittofoto"
   }
 }

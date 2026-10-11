@@ -3,7 +3,7 @@
 import { use, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useSession } from 'next-auth/react';
-import { ArrowLeft, Check, Minus, Plus } from 'lucide-react';
+import { ArrowLeft, CalendarDays, Check, ChevronDown, MapPin, Minus, Plus, Receipt } from 'lucide-react';
 import { toast } from 'sonner';
 import { Link, useRouter } from '@/i18n/navigation';
 import { trpc } from '@/lib/trpc';
@@ -116,7 +116,7 @@ export default function ClaimReceiptPage({ params }: { params: Promise<{ groupId
         extra: extracted.tax + (extracted.tip ?? 0),
       })
     : 0;
-  const merchant = extracted.merchantName?.trim() || t('receipt');
+  const merchant = extracted.merchantName?.trim() ?? '';
   const requester = claims.data.requestedBy?.name;
   const iAmDone = !!myId && claims.data.done.includes(myId);
   const shown = onlyOpen ? items.filter((i) => openOf(i) > 0) : items;
@@ -139,9 +139,71 @@ export default function ClaimReceiptPage({ params }: { params: Promise<{ groupId
       <div>
         <h1 className="text-2xl font-bold">{t('title')}</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {requester ? t('introBy', { name: requester, merchant }) : t('intro', { merchant })}
+          {merchant
+            ? requester
+              ? t('introBy', { name: requester, merchant })
+              : t('intro', { merchant })
+            : requester
+              ? t('introByNoName', { name: requester })
+              : t('introNoName')}
         </p>
       </div>
+
+      {/* Where and when: shop, address, date, total, and the photo on demand */}
+      <Card data-testid="claim-receipt-info">
+        <CardContent className="space-y-2 py-3 text-sm">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0 space-y-1">
+              <p className="flex items-center gap-2 font-medium">
+                <Receipt className="h-4 w-4 shrink-0 text-muted-foreground" />
+                <span className="truncate">{merchant || t('receiptFallback')}</span>
+              </p>
+              {extracted.merchantAddress?.trim() && (
+                <p className="flex items-start gap-2 text-muted-foreground">
+                  <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
+                  <span>{extracted.merchantAddress.trim()}</span>
+                </p>
+              )}
+              {extracted.date && (
+                <p className="flex items-center gap-2 text-muted-foreground">
+                  <CalendarDays className="h-4 w-4 shrink-0" />
+                  <span>
+                    {Number.isNaN(Date.parse(extracted.date.slice(0, 10)))
+                      ? extracted.date
+                      : new Date(`${extracted.date.slice(0, 10)}T12:00:00`).toLocaleDateString(locale, {
+                          weekday: 'short',
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric',
+                        })}
+                  </span>
+                </p>
+              )}
+            </div>
+            <div className="shrink-0 text-right">
+              <p className="font-semibold">{fmt(extracted.total)}</p>
+              {rate !== null && <p className="text-xs text-muted-foreground">≈ {fmtGroup(extracted.total)}</p>}
+            </div>
+          </div>
+          {receipt?.imagePath && (
+            <details className="group rounded-md border" data-testid="claim-receipt-image">
+              <summary className="flex cursor-pointer list-none items-center justify-between px-3 py-2 text-sm font-medium">
+                {t('showReceipt')}
+                <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
+              </summary>
+              <a href={`/api/uploads/${receipt.imagePath}`} target="_blank" rel="noopener noreferrer">
+                {/* eslint-disable-next-line @next/next/no-img-element -- user-uploaded receipt photo of unknown size */}
+                <img
+                  src={`/api/uploads/${receipt.imagePath}`}
+                  alt={t('receiptImageAlt')}
+                  loading="lazy"
+                  className="max-h-[70vh] w-full rounded-b-md object-contain"
+                />
+              </a>
+            </details>
+          )}
+        </CardContent>
+      </Card>
 
       {booked && (
         <Card className="border-primary/40">

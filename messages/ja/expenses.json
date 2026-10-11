@@ -263,7 +263,9 @@
     "title": "自分の品目を選ぶ",
     "intro": "「{merchant}」で自分が頼んだものをタップしてください。分けたものは両方がタップします。",
     "introBy": "{name}さんが「{merchant}」をスキャンしました。自分が頼んだものをタップしてください。分けたものは両方がタップします。",
-    "receipt": "レシート",
+    "introNoName": "自分の分をすべてタップしてください。分け合ったものは両方がタップします。",
+    "introByNoName": "{name} がレシートをスキャンしました。自分の分をすべてタップしてください。分け合ったものは両方がタップします。",
+    "receiptFallback": "レシート",
     "backToGroup": "グループに戻る",
     "booked": "このレシートは登録済みです。",
     "openExpense": "支出を見る",
@@ -294,6 +296,8 @@
     "todoView": "見る",
     "todoAllPicked": "すべて選択済み、登録できます",
     "pickingLabel": "選択中：",
-    "notStartedLabel": "未着手："
+    "notStartedLabel": "未着手：",
+    "showReceipt": "レシートの写真を表示",
+    "receiptImageAlt": "レシートの写真"
   }
 }

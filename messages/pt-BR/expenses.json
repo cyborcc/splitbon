@@ -263,7 +263,9 @@
     "title": "Escolha seus itens",
     "intro": "Toque em tudo o que você consumiu em “{merchant}”. Se dividiram algo, os dois tocam.",
     "introBy": "{name} escaneou “{merchant}”. Toque em tudo o que você consumiu; se dividiram algo, os dois tocam.",
-    "receipt": "o recibo",
+    "introNoName": "Toque em tudo o que você consumiu. Se dividiram algo, os dois tocam.",
+    "introByNoName": "{name} escaneou um recibo. Toque em tudo o que você consumiu. Se dividiram algo, os dois tocam.",
+    "receiptFallback": "Recibo",
     "backToGroup": "Voltar ao grupo",
     "booked": "Este recibo já foi lançado.",
     "openExpense": "Ver despesa",
@@ -294,6 +296,8 @@
     "todoView": "Ver",
     "todoAllPicked": "Tudo escolhido, pronto para lançar",
     "pickingLabel": "Escolhendo:",
-    "notStartedLabel": "Ainda não começou:"
+    "notStartedLabel": "Ainda não começou:",
+    "showReceipt": "Ver foto do recibo",
+    "receiptImageAlt": "Foto do recibo"
   }
 }

@@ -263,7 +263,9 @@
     "title": "Choisis tes articles",
     "intro": "Touche tout ce que tu as pris chez « {merchant} ». Si vous avez partagé, touchez-le tous les deux.",
     "introBy": "{name} a scanné « {merchant} ». Touche tout ce que tu as pris ; si vous avez partagé, touchez-le tous les deux.",
-    "receipt": "le ticket",
+    "introNoName": "Touchez tout ce que vous avez pris. Si vous avez partagé quelque chose, touchez-le tous les deux.",
+    "introByNoName": "{name} a scanné un ticket. Touchez tout ce que vous avez pris. Si vous avez partagé quelque chose, touchez-le tous les deux.",
+    "receiptFallback": "Ticket",
     "backToGroup": "Retour au groupe",
     "booked": "Ce ticket est déjà enregistré.",
     "openExpense": "Voir la dépense",
@@ -294,6 +296,8 @@
     "todoView": "Voir",
     "todoAllPicked": "Tout est choisi, prêt à enregistrer",
     "pickingLabel": "En train de choisir :",
-    "notStartedLabel": "Pas encore commencé :"
+    "notStartedLabel": "Pas encore commencé :",
+    "showReceipt": "Voir la photo du ticket",
+    "receiptImageAlt": "Photo du ticket"
   }
 }

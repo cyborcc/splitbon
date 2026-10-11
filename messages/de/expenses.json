@@ -263,7 +263,9 @@
     "title": "Wähle deine Posten",
     "intro": "Tippe auf alles, was du von „{merchant}“ hattest. Habt ihr etwas geteilt, tippen beide darauf.",
     "introBy": "{name} hat „{merchant}“ gescannt. Tippe auf alles, was du hattest. Habt ihr etwas geteilt, tippen beide darauf.",
-    "receipt": "dem Beleg",
+    "introNoName": "Tippe auf alles, was du hattest. Habt ihr etwas geteilt, tippen beide darauf.",
+    "introByNoName": "{name} hat einen Beleg gescannt. Tippe auf alles, was du hattest. Habt ihr etwas geteilt, tippen beide darauf.",
+    "receiptFallback": "Beleg",
     "backToGroup": "Zur Gruppe",
     "booked": "Dieser Beleg ist schon gebucht.",
     "openExpense": "Ausgabe ansehen",
@@ -294,6 +296,8 @@
     "todoView": "Ansehen",
     "todoAllPicked": "Alles verteilt, bereit zum Buchen",
     "pickingLabel": "Wählt gerade:",
-    "notStartedLabel": "Noch nicht angefangen:"
+    "notStartedLabel": "Noch nicht angefangen:",
+    "showReceipt": "Foto des Belegs anzeigen",
+    "receiptImageAlt": "Foto des Belegs"
   }
 }

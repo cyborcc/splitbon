@@ -263,7 +263,9 @@
     "title": "Pick your items",
     "intro": "Tap everything you had from “{merchant}”. If you shared something, both of you tap it.",
     "introBy": "{name} scanned “{merchant}”. Tap everything you had; if you shared something, both of you tap it.",
-    "receipt": "the receipt",
+    "introNoName": "Tap everything you had. If you shared something, both of you tap it.",
+    "introByNoName": "{name} scanned a receipt. Tap everything you had. If you shared something, both of you tap it.",
+    "receiptFallback": "Receipt",
     "backToGroup": "Back to the group",
     "booked": "This receipt has already been booked.",
     "openExpense": "View expense",
@@ -294,6 +296,8 @@
     "todoView": "View",
     "todoAllPicked": "Everything is picked, ready to book",
     "pickingLabel": "Picking:",
-    "notStartedLabel": "Not started:"
+    "notStartedLabel": "Not started:",
+    "showReceipt": "Show receipt photo",
+    "receiptImageAlt": "Receipt photo"
   }
 }

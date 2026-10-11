@@ -263,7 +263,9 @@
     "title": "내 품목 고르기",
     "intro": "“{merchant}”에서 먹은 것을 모두 누르세요. 나눠 먹은 것은 둘 다 누릅니다.",
     "introBy": "{name}님이 “{merchant}” 영수증을 스캔했습니다. 먹은 것을 모두 누르세요. 나눠 먹은 것은 둘 다 누릅니다.",
-    "receipt": "영수증",
+    "introNoName": "내가 먹은 것을 모두 탭하세요. 나눠 먹었다면 둘 다 탭하세요.",
+    "introByNoName": "{name}님이 영수증을 스캔했습니다. 내가 먹은 것을 모두 탭하세요. 나눠 먹었다면 둘 다 탭하세요.",
+    "receiptFallback": "영수증",
     "backToGroup": "그룹으로 돌아가기",
     "booked": "이 영수증은 이미 등록되었습니다.",
     "openExpense": "지출 보기",
@@ -294,6 +296,8 @@
     "todoView": "보기",
     "todoAllPicked": "모두 선택됨, 등록 준비 완료",
     "pickingLabel": "고르는 중:",
-    "notStartedLabel": "아직 시작 안 함:"
+    "notStartedLabel": "아직 시작 안 함:",
+    "showReceipt": "영수증 사진 보기",
+    "receiptImageAlt": "영수증 사진"
   }
 }

@@ -263,7 +263,9 @@
     "title": "选择你的项目",
     "intro": "点选你在“{merchant}”点的所有项目。共享的项目两人都点选。",
     "introBy": "{name} 扫描了“{merchant}”。点选你点的所有项目；共享的项目两人都点选。",
-    "receipt": "小票",
+    "introNoName": "点选你消费的所有项目。共享的项目请双方都点选。",
+    "introByNoName": "{name} 扫描了一张收据。点选你消费的所有项目。共享的项目请双方都点选。",
+    "receiptFallback": "收据",
     "backToGroup": "返回群组",
     "booked": "此小票已记账。",
     "openExpense": "查看支出",
@@ -294,6 +296,8 @@
     "todoView": "查看",
     "todoAllPicked": "全部已选，可以记账",
     "pickingLabel": "正在选择：",
-    "notStartedLabel": "尚未开始："
+    "notStartedLabel": "尚未开始：",
+    "showReceipt": "查看收据照片",
+    "receiptImageAlt": "收据照片"
   }
 }

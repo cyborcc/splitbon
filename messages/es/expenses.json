@@ -263,7 +263,9 @@
     "title": "Elige tus artículos",
     "intro": "Toca todo lo que tomaste de «{merchant}». Si compartisteis algo, tocadlo los dos.",
     "introBy": "{name} escaneó «{merchant}». Toca todo lo que tomaste; si compartisteis algo, tocadlo los dos.",
-    "receipt": "el ticket",
+    "introNoName": "Toca todo lo que tomaste. Si compartisteis algo, tocadlo los dos.",
+    "introByNoName": "{name} escaneó un ticket. Toca todo lo que tomaste. Si compartisteis algo, tocadlo los dos.",
+    "receiptFallback": "Ticket",
     "backToGroup": "Volver al grupo",
     "booked": "Este ticket ya está registrado.",
     "openExpense": "Ver gasto",
@@ -294,6 +296,8 @@
     "todoView": "Ver",
     "todoAllPicked": "Todo elegido, listo para registrar",
     "pickingLabel": "Eligiendo:",
-    "notStartedLabel": "Sin empezar:"
+    "notStartedLabel": "Sin empezar:",
+    "showReceipt": "Ver foto del ticket",
+    "receiptImageAlt": "Foto del ticket"
   }
 }
