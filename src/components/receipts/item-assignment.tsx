@@ -30,6 +30,8 @@ import { toast } from 'sonner';
 import { useOrderedCurrencies } from '@/lib/use-ordered-currencies';
 import { ReceiptRatePreview } from './receipt-rate-preview';
 import { ReceiptHistory, scrollToItem } from './receipt-history';
+import { claimsToAssignments } from '@/lib/receipt-claims';
+import { Link } from '@/i18n/navigation';
 
 type Member = { id: string; name: string | null; image?: string | null | undefined };
 
@@ -87,6 +89,11 @@ export function ItemAssignment({
   const currencyOptions = useOrderedCurrencies(groupId, groupCurrency);
   const receiptData = trpc.receipts.getReceiptItems.useQuery({ receiptId });
   const history = trpc.receipts.history.useQuery({ receiptId });
+  // What the group picked themselves ("everyone picks their own lines"), refreshed while that runs
+  const claims = trpc.receipts.getClaims.useQuery(
+    { receiptId },
+    { enabled: !expenseId, refetchInterval: (q) => (q.state.data?.requestedAt ? 5000 : false) },
+  );
   const utils = trpc.useUtils();
   const refreshItems = () =>
     Promise.all([
@@ -993,6 +1000,52 @@ export function ItemAssignment({
             </div>
           </CardContent>
         </Card>
+
+        {!expenseId && claims.data && (claims.data.requestedAt || claims.data.claims.length > 0) && (
+          <Card className="border-primary/40" data-testid="claim-status">
+            <CardContent className="space-y-2 py-3 text-sm">
+              <p>
+                {claims.data.claims.length === 0
+                  ? t('claimNone')
+                  : t('claimStatus', {
+                      people: new Set(claims.data.claims.map((c) => c.userId)).size,
+                      items: new Set(claims.data.claims.map((c) => c.receiptItemId)).size,
+                      total: items.length,
+                    })}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  disabled={claims.data.claims.length === 0}
+                  onClick={() => {
+                    const picked = claimsToAssignments(claims.data!.claims, new Set(members.map((m) => m.id)));
+                    setAssignments((prev) => ({ ...prev, ...picked }));
+                    setCounts((prev) => {
+                      const next = { ...prev };
+                      for (const itemId of Object.keys(picked)) delete next[itemId];
+                      return next;
+                    });
+                    toast.success(t('claimsApplied'));
+                  }}
+                  data-testid="apply-claims-btn"
+                >
+                  <Check className="mr-2 h-4 w-4" />
+                  {t('applyClaims')}
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  nativeButton={false}
+                  render={<Link href={`/groups/${groupId}/receipts/${receiptId}/claim`} />}
+                >
+                  {t('pickOwn')}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Quick actions */}
         <div className="flex gap-2">

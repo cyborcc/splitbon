@@ -232,6 +232,9 @@ model Receipt {
   paidById      String?
   uploadedById  String?
   isGuest       Boolean       @default(false)
+  // "Everyone picks their own lines": when it was asked for, and by whom
+  claimRequestedAt   DateTime?
+  claimRequestedById String?
 
   items   ReceiptItem[]
   expense Expense?
@@ -255,6 +258,7 @@ model ReceiptItem {
   sortOrder  Int    @default(0)
 
   assignments ReceiptItemAssignment[]
+  claims      ReceiptItemClaim[]
   receipt     Receipt @relation(fields: [receiptId], references: [id], onDelete: Cascade)
 
   @@index([receiptId])
@@ -269,6 +273,20 @@ model ReceiptItemAssignment {
   receiptItem ReceiptItem @relation(fields: [receiptItemId], references: [id], onDelete: Cascade)
 
   @@unique([receiptItemId, userId])
+}
+
+// A group member saying "this line is (partly) mine" while everyone picks their own lines.
+// One row per person and line, so people picking at the same time never overwrite each other.
+model ReceiptItemClaim {
+  id            String   @id @default(cuid())
+  receiptItemId String
+  userId        String
+  createdAt     DateTime @default(now())
+
+  receiptItem ReceiptItem @relation(fields: [receiptItemId], references: [id], onDelete: Cascade)
+
+  @@unique([receiptItemId, userId])
+  @@index([userId])
 }
 
 enum ReceiptStatus {

@@ -144,7 +144,11 @@
     "createSessionFailed": "Falha ao criar a sessão.",
     "model": "AI model",
     "modelDefault": "default",
-    "modelHint": "If the chosen model fails, the default chain takes over."
+    "modelHint": "If the chosen model fails, the default chain takes over.",
+    "startClaimRequest": "Pedir que cada um escolha seus itens",
+    "startClaimRequestHint": "Todos do grupo recebem uma notificação e escolhem os próprios itens, ao mesmo tempo.",
+    "claimRequestSending": "Enviando…",
+    "claimRequestSent": "Pedido enviado para {count, plural, one {# pessoa} other {# pessoas}}"
   },
   "receipt": {
     "hideImage": "Ocultar imagem do recibo",
@@ -234,7 +238,12 @@
     "cardChargeExplain": "The receipt only decides who carries which part. What gets shared is the amount that actually left the account (with the bank’s rate and fees).",
     "cardChargeRate": "Bank rate: 1 {from} = {rate} {to}",
     "cardChargeVsReference": "(reference rate {rate}, {diff})",
-    "cardChargeShared": "The charged {amount} is shared in the proportions of the receipt."
+    "cardChargeShared": "The charged {amount} is shared in the proportions of the receipt.",
+    "claimNone": "Aguardando o grupo: ninguém escolheu nada ainda.",
+    "claimStatus": "{people, plural, one {# pessoa escolheu} other {# pessoas escolheram}} {items} de {total} itens.",
+    "applyClaims": "Aplicar as escolhas do grupo",
+    "claimsApplied": "As escolhas do grupo foram aplicadas",
+    "pickOwn": "Escolher meus itens"
   },
   "splits": {
     "selectAll": "Selecionar todos",
@@ -242,5 +251,23 @@
     "perPerson": "por pessoa",
     "remaining": "Restante",
     "total": "Total"
+  },
+  "claim": {
+    "title": "Escolha seus itens",
+    "intro": "Toque em tudo o que você consumiu em “{merchant}”. Se dividiram algo, os dois tocam.",
+    "introBy": "{name} escaneou “{merchant}”. Toque em tudo o que você consumiu; se dividiram algo, os dois tocam.",
+    "receipt": "o recibo",
+    "backToGroup": "Voltar ao grupo",
+    "booked": "Este recibo já foi lançado.",
+    "openExpense": "Ver despesa",
+    "sharedBy": "dividido por {count}",
+    "yourShare": "Sua parte: {amount}",
+    "unclaimed": "{count, plural, one {# item} other {# itens}} sem escolha ainda",
+    "allClaimed": "Todos os itens foram escolhidos",
+    "done": "Pronto",
+    "shareHint": "Inclui sua parte de impostos e gorjeta. O valor é final quando o recibo for lançado.",
+    "bookHint": "Todos prontos?",
+    "bookLink": "Lançar o recibo",
+    "notFound": "Recibo não encontrado."
   }
 }

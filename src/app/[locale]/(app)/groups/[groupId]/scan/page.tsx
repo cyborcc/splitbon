@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Loader2, Camera, Users } from 'lucide-react';
+import { ArrowLeft, Loader2, Camera, Users, BellRing } from 'lucide-react';
 import { CorrectionChat } from '@/components/receipts/correction-chat';
 import { useSession } from 'next-auth/react';
 import { toast } from 'sonner';
@@ -93,6 +93,14 @@ function ScanReceiptContent({ params }: { params: Promise<{ groupId: string }> }
   });
 
   const shareForClaiming = trpc.guest.createClaimSession.useMutation();
+  // Asks the group to pick their own lines; the person asking picks theirs next
+  const startClaimRequest = trpc.receipts.startClaimRequest.useMutation({
+    onSuccess: ({ notified }) => {
+      toast.success(t('claimRequestSent', { count: notified }));
+      if (receiptId) router.push(`/groups/${groupId}/receipts/${receiptId}/claim`);
+    },
+    onError: (err) => toast.error(err.message),
+  });
   const receiptData = trpc.receipts.getReceiptItems.useQuery(
     { receiptId: receiptId! },
     { enabled: step === 'assign' && !!receiptId },
@@ -374,6 +382,22 @@ function ScanReceiptContent({ params }: { params: Promise<{ groupId: string }> }
             <span className="text-xs">{t('or')}</span>
             <div className="flex-1 h-px bg-border" />
           </div>
+          <Button
+            className="w-full"
+            onClick={() => receiptId && startClaimRequest.mutate({ receiptId })}
+            disabled={
+              correctionBlocked ||
+              startClaimRequest.isPending ||
+              !!editExpenseId ||
+              !receiptData.data?.items?.length ||
+              members.length < 2
+            }
+            data-testid="start-claim-request-btn"
+          >
+            <BellRing className="mr-2 h-4 w-4" />
+            {startClaimRequest.isPending ? t('claimRequestSending') : t('startClaimRequest')}
+          </Button>
+          <p className="-mt-2 text-center text-xs text-muted-foreground">{t('startClaimRequestHint')}</p>
           <Button
             variant="outline"
             className="w-full"

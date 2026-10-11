@@ -13,6 +13,7 @@ import { previewReceiptCorrection, resolveReceiptCorrection } from '../../lib/re
 import { stripUndefined } from '../../lib/strip-undefined';
 import { getUserPromptLanguage } from '../../lib/user-language';
 import { money, sendNotifications, shareChangeItems } from '../../lib/notifications';
+import { checkRateLimit } from '../../lib/rate-limit';
 
 /**
  * Verify that a receipt exists and the user has access to it (via group membership).
@@ -1148,6 +1149,108 @@ export const receiptsRouter = createTRPCRouter({
       metadata: (log.metadata ?? {}) as Record<string, unknown>,
     }));
   }),
+
+  // ─── Everyone picks their own lines ───────────────────────
+
+  /**
+   * Asks every other member of the receipt's group to pick their own lines (bell + push). The receipt
+   * stays open (no expense yet) until someone books it with the picks applied.
+   */
+  startClaimRequest: protectedProcedure.input(z.object({ receiptId: z.string() })).mutation(async ({ ctx, input }) => {
+    const receipt = await verifyReceiptAccess(ctx.db, input.receiptId, ctx.user.id);
+    if (!receipt.groupId || !receipt.group) {
+      throw new TRPCError({ code: 'BAD_REQUEST', message: 'Only a receipt of a group can be shared with it' });
+    }
+    if (receipt.status !== 'COMPLETED') {
+      throw new TRPCError({ code: 'BAD_REQUEST', message: 'Receipt must be processed first' });
+    }
+    const expense = await ctx.db.expense.findUnique({ where: { receiptId: receipt.id }, select: { id: true } });
+    if (expense) throw new TRPCError({ code: 'BAD_REQUEST', message: 'Receipt already has an expense' });
+    if (!checkRateLimit(`claim-request:${receipt.id}`, 5, 60 * 60 * 1000).allowed) {
+      throw new TRPCError({
+        code: 'TOO_MANY_REQUESTS',
+        message: 'Too many requests for this receipt. Try again later.',
+      });
+    }
+
+    await ctx.db.receipt.update({
+      where: { id: receipt.id },
+      data: {
+        claimRequestedAt: new Date(),
+        claimRequestedById: ctx.user.id,
+        savedById: receipt.savedById ?? ctx.user.id,
+      },
+    });
+
+    const extracted = receipt.extractedData ? parseExtractedData(receipt.extractedData) : null;
+    const actor = await ctx.db.user.findUnique({ where: { id: ctx.user.id }, select: { name: true, email: true } });
+    const others = receipt.group.members.map((m: { userId: string }) => m.userId).filter((id) => id !== ctx.user.id);
+    await sendNotifications(
+      ctx.db,
+      others.map((userId) => ({
+        userId,
+        kind: 'CLAIM_REQUEST' as const,
+        groupId: receipt.groupId!,
+        entityId: receipt.id,
+        vars: {
+          actor: actor?.name ?? actor?.email ?? '?',
+          title: extracted?.merchantName?.trim() || receipt.originalName,
+        },
+      })),
+    );
+    return { notified: others.length };
+  }),
+
+  /** Who picked which line so far, and whether picking was asked for. */
+  getClaims: protectedProcedure.input(z.object({ receiptId: z.string() })).query(async ({ ctx, input }) => {
+    const receipt = await verifyReceiptAccess(ctx.db, input.receiptId, ctx.user.id);
+    const [claims, expense, requestedBy] = await Promise.all([
+      ctx.db.receiptItemClaim.findMany({
+        where: { receiptItem: { receiptId: receipt.id } },
+        select: { receiptItemId: true, userId: true },
+        orderBy: { createdAt: 'asc' },
+      }),
+      ctx.db.expense.findUnique({ where: { receiptId: receipt.id }, select: { id: true } }),
+      receipt.claimRequestedById
+        ? ctx.db.user.findUnique({ where: { id: receipt.claimRequestedById }, select: { id: true, name: true } })
+        : null,
+    ]);
+    return {
+      requestedAt: receipt.claimRequestedAt,
+      requestedBy,
+      expenseId: expense?.id ?? null,
+      claims,
+    };
+  }),
+
+  /**
+   * Marks a line as (not) the signed-in person's own. Each person only changes their own row, so
+   * people picking at the same time never undo each other's picks.
+   */
+  setClaim: protectedProcedure
+    .input(z.object({ receiptItemId: z.string(), claimed: z.boolean() }))
+    .mutation(async ({ ctx, input }) => {
+      const item = await ctx.db.receiptItem.findUnique({
+        where: { id: input.receiptItemId },
+        select: { id: true, receiptId: true },
+      });
+      if (!item) throw new TRPCError({ code: 'NOT_FOUND' });
+      const receipt = await verifyReceiptAccess(ctx.db, item.receiptId, ctx.user.id);
+      if (!receipt.groupId) throw new TRPCError({ code: 'BAD_REQUEST', message: 'Only a receipt of a group' });
+      const expense = await ctx.db.expense.findUnique({ where: { receiptId: receipt.id }, select: { id: true } });
+      if (expense) {
+        throw new TRPCError({ code: 'CONFLICT', message: 'This receipt has already been booked' });
+      }
+      if (input.claimed) {
+        await ctx.db.receiptItemClaim.createMany({
+          data: [{ receiptItemId: item.id, userId: ctx.user.id }],
+          skipDuplicates: true,
+        });
+      } else {
+        await ctx.db.receiptItemClaim.deleteMany({ where: { receiptItemId: item.id, userId: ctx.user.id } });
+      }
+      return { claimed: input.claimed };
+    }),
 
   listPending: groupMemberProcedure.input(z.object({ groupId: z.string() })).query(async ({ ctx, input }) => {
     const receipts = await ctx.db.receipt.findMany({

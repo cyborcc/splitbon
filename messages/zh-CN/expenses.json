@@ -144,7 +144,11 @@
     "createSessionFailed": "创建会话失败。",
     "model": "AI model",
     "modelDefault": "default",
-    "modelHint": "If the chosen model fails, the default chain takes over."
+    "modelHint": "If the chosen model fails, the default chain takes over.",
+    "startClaimRequest": "请大家各自选择自己的项目",
+    "startClaimRequestHint": "群组成员都会收到通知，并可同时选择自己的项目。",
+    "claimRequestSending": "发送中…",
+    "claimRequestSent": "已向 {count} 人发送请求"
   },
   "receipt": {
     "hideImage": "隐藏小票图片",
@@ -234,7 +238,12 @@
     "cardChargeExplain": "The receipt only decides who carries which part. What gets shared is the amount that actually left the account (with the bank’s rate and fees).",
     "cardChargeRate": "Bank rate: 1 {from} = {rate} {to}",
     "cardChargeVsReference": "(reference rate {rate}, {diff})",
-    "cardChargeShared": "The charged {amount} is shared in the proportions of the receipt."
+    "cardChargeShared": "The charged {amount} is shared in the proportions of the receipt.",
+    "claimNone": "等待群组：还没有人选择。",
+    "claimStatus": "{people} 人已选择 {total} 项中的 {items} 项。",
+    "applyClaims": "采用群组的选择",
+    "claimsApplied": "已采用群组的选择",
+    "pickOwn": "选择我的项目"
   },
   "splits": {
     "selectAll": "全选",
@@ -242,5 +251,23 @@
     "perPerson": "每人",
     "remaining": "剩余",
     "total": "合计"
+  },
+  "claim": {
+    "title": "选择你的项目",
+    "intro": "点选你在“{merchant}”点的所有项目。共享的项目两人都点选。",
+    "introBy": "{name} 扫描了“{merchant}”。点选你点的所有项目；共享的项目两人都点选。",
+    "receipt": "小票",
+    "backToGroup": "返回群组",
+    "booked": "此小票已记账。",
+    "openExpense": "查看支出",
+    "sharedBy": "{count} 人分摊",
+    "yourShare": "你的份额：{amount}",
+    "unclaimed": "还有 {count} 项无人选择",
+    "allClaimed": "所有项目都已选择",
+    "done": "完成",
+    "shareHint": "包含你应分摊的税费和小费。小票记账后金额才最终确定。",
+    "bookHint": "大家都选好了吗？",
+    "bookLink": "记账",
+    "notFound": "找不到此小票。"
   }
 }

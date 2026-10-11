@@ -144,7 +144,11 @@
     "createSessionFailed": "Échec de la création de la session.",
     "model": "AI model",
     "modelDefault": "default",
-    "modelHint": "If the chosen model fails, the default chain takes over."
+    "modelHint": "If the chosen model fails, the default chain takes over.",
+    "startClaimRequest": "Demander à chacun de choisir ses articles",
+    "startClaimRequestHint": "Tout le groupe reçoit une notification et choisit ses propres articles, en même temps.",
+    "claimRequestSending": "Envoi…",
+    "claimRequestSent": "Demande envoyée à {count, plural, one {# personne} other {# personnes}}"
   },
   "receipt": {
     "hideImage": "Masquer l'image du reçu",
@@ -234,7 +238,12 @@
     "cardChargeExplain": "The receipt only decides who carries which part. What gets shared is the amount that actually left the account (with the bank’s rate and fees).",
     "cardChargeRate": "Bank rate: 1 {from} = {rate} {to}",
     "cardChargeVsReference": "(reference rate {rate}, {diff})",
-    "cardChargeShared": "The charged {amount} is shared in the proportions of the receipt."
+    "cardChargeShared": "The charged {amount} is shared in the proportions of the receipt.",
+    "claimNone": "En attente du groupe : personne n’a encore rien choisi.",
+    "claimStatus": "{people, plural, one {# personne a} other {# personnes ont}} choisi {items} articles sur {total}.",
+    "applyClaims": "Appliquer les choix du groupe",
+    "claimsApplied": "Les choix du groupe ont été appliqués",
+    "pickOwn": "Choisir mes articles"
   },
   "splits": {
     "selectAll": "Tout sélectionner",
@@ -242,5 +251,23 @@
     "perPerson": "par personne",
     "remaining": "Restant",
     "total": "Total"
+  },
+  "claim": {
+    "title": "Choisis tes articles",
+    "intro": "Touche tout ce que tu as pris chez « {merchant} ». Si vous avez partagé, touchez-le tous les deux.",
+    "introBy": "{name} a scanné « {merchant} ». Touche tout ce que tu as pris ; si vous avez partagé, touchez-le tous les deux.",
+    "receipt": "le ticket",
+    "backToGroup": "Retour au groupe",
+    "booked": "Ce ticket est déjà enregistré.",
+    "openExpense": "Voir la dépense",
+    "sharedBy": "partagé par {count}",
+    "yourShare": "Ta part : {amount}",
+    "unclaimed": "{count, plural, one {# article} other {# articles}} pas encore choisi(s)",
+    "allClaimed": "Tous les articles sont choisis",
+    "done": "Terminé",
+    "shareHint": "Inclut ta part de taxes et de pourboire. Le montant est définitif une fois le ticket enregistré.",
+    "bookHint": "Tout le monde a fini ?",
+    "bookLink": "Enregistrer le ticket",
+    "notFound": "Ticket introuvable."
   }
 }

@@ -144,7 +144,11 @@
     "createSessionFailed": "Failed to create claiming session.",
     "model": "AI model",
     "modelDefault": "default",
-    "modelHint": "If the chosen model fails, the default chain takes over."
+    "modelHint": "If the chosen model fails, the default chain takes over.",
+    "startClaimRequest": "Ask everyone to pick their items",
+    "startClaimRequestHint": "Everyone in the group gets a notification and picks their own items, all at the same time.",
+    "claimRequestSending": "Sending…",
+    "claimRequestSent": "Request sent to {count, plural, one {# person} other {# people}}"
   },
   "receipt": {
     "hideImage": "Hide Receipt Image",
@@ -234,7 +238,12 @@
     "cardChargeExplain": "The receipt only decides who carries which part. What gets shared is the amount that actually left the account (with the bank’s rate and fees).",
     "cardChargeRate": "Bank rate: 1 {from} = {rate} {to}",
     "cardChargeVsReference": "(reference rate {rate}, {diff})",
-    "cardChargeShared": "The charged {amount} is shared in the proportions of the receipt."
+    "cardChargeShared": "The charged {amount} is shared in the proportions of the receipt.",
+    "claimNone": "Waiting for the group: nobody has picked anything yet.",
+    "claimStatus": "{people, plural, one {# person has} other {# people have}} picked {items} of {total} items.",
+    "applyClaims": "Apply the group's picks",
+    "claimsApplied": "The group's picks were applied",
+    "pickOwn": "Pick my own items"
   },
   "splits": {
     "selectAll": "Select all",
@@ -242,5 +251,23 @@
     "perPerson": "per person",
     "remaining": "Remaining",
     "total": "Total"
+  },
+  "claim": {
+    "title": "Pick your items",
+    "intro": "Tap everything you had from “{merchant}”. If you shared something, both of you tap it.",
+    "introBy": "{name} scanned “{merchant}”. Tap everything you had; if you shared something, both of you tap it.",
+    "receipt": "the receipt",
+    "backToGroup": "Back to the group",
+    "booked": "This receipt has already been booked.",
+    "openExpense": "View expense",
+    "sharedBy": "shared by {count}",
+    "yourShare": "Your share: {amount}",
+    "unclaimed": "{count, plural, one {# item} other {# items}} nobody has picked yet",
+    "allClaimed": "Every item has been picked",
+    "done": "Done",
+    "shareHint": "Includes your part of tax and tip. The amount is final once the receipt is booked.",
+    "bookHint": "Everyone done?",
+    "bookLink": "Book the receipt",
+    "notFound": "This receipt can't be found."
   }
 }

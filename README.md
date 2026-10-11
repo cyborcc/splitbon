@@ -76,6 +76,7 @@ Backups, upgrades and prebuilt image tags are covered in [Upgrading and backups]
 | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | 🧾 **Receipt scanning** | Photo in, line items out. Rescan with a correction hint, pick the model per receipt, review AI corrections before they are applied.       |
 | 🌍 **Multi-currency**   | ECB exchange rates for the day of the expense, or enter your own. Receipts keep the rate with its source and date.                        |
+| 🙋 **Everyone picks**   | One tap asks the whole group: everyone gets a push, opens the receipt and ticks their own items, all at the same time.                    |
 | 🤝 **Claim links**      | Share a scanned receipt; everyone picks their own items, split dishes between people, join as a couple. No account needed for guests.     |
 | 📍 **Places & maps**    | Add where you paid: OpenStreetMap search, GPS, places nearby, a mini map on every expense.                                                |
 | 📊 **Trip statistics**  | Totals, categories, timeline, people, map, budget and a daily-cost forecast.                                                              |

@@ -144,7 +144,11 @@
     "createSessionFailed": "セッションの作成に失敗しました。",
     "model": "AI model",
     "modelDefault": "default",
-    "modelHint": "If the chosen model fails, the default chain takes over."
+    "modelHint": "If the chosen model fails, the default chain takes over.",
+    "startClaimRequest": "全員に自分の品目を選んでもらう",
+    "startClaimRequestHint": "グループ全員に通知が届き、各自が同時に自分の品目を選べます。",
+    "claimRequestSending": "送信中…",
+    "claimRequestSent": "{count}人にリクエストを送信しました"
   },
   "receipt": {
     "hideImage": "レシート画像を非表示",
@@ -234,7 +238,12 @@
     "cardChargeExplain": "The receipt only decides who carries which part. What gets shared is the amount that actually left the account (with the bank’s rate and fees).",
     "cardChargeRate": "Bank rate: 1 {from} = {rate} {to}",
     "cardChargeVsReference": "(reference rate {rate}, {diff})",
-    "cardChargeShared": "The charged {amount} is shared in the proportions of the receipt."
+    "cardChargeShared": "The charged {amount} is shared in the proportions of the receipt.",
+    "claimNone": "グループの回答待ち：まだ誰も選んでいません。",
+    "claimStatus": "{people}人が{total}品目中{items}品目を選びました。",
+    "applyClaims": "グループの選択を反映",
+    "claimsApplied": "グループの選択を反映しました",
+    "pickOwn": "自分の品目を選ぶ"
   },
   "splits": {
     "selectAll": "すべて選択",
@@ -242,5 +251,23 @@
     "perPerson": "一人あたり",
     "remaining": "残り",
     "total": "合計"
+  },
+  "claim": {
+    "title": "自分の品目を選ぶ",
+    "intro": "「{merchant}」で自分が頼んだものをタップしてください。分けたものは両方がタップします。",
+    "introBy": "{name}さんが「{merchant}」をスキャンしました。自分が頼んだものをタップしてください。分けたものは両方がタップします。",
+    "receipt": "レシート",
+    "backToGroup": "グループに戻る",
+    "booked": "このレシートは登録済みです。",
+    "openExpense": "支出を見る",
+    "sharedBy": "{count}人で分割",
+    "yourShare": "あなたの負担：{amount}",
+    "unclaimed": "まだ誰も選んでいない品目：{count}",
+    "allClaimed": "すべての品目が選ばれました",
+    "done": "完了",
+    "shareHint": "税金とチップの負担分を含みます。金額はレシート登録時に確定します。",
+    "bookHint": "全員終わりましたか？",
+    "bookLink": "レシートを登録",
+    "notFound": "レシートが見つかりません。"
   }
 }

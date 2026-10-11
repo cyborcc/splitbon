@@ -6,6 +6,7 @@ import { Bell, BellOff, BellRing, Check } from 'lucide-react';
 import { toast } from 'sonner';
 import { detectPushSupport, readPushEnvironment, type PushSupport } from '@/lib/push-support';
 import { trpc } from '@/lib/trpc';
+import { notificationPath } from '@/lib/notification-path';
 import { Link, useRouter } from '@/i18n/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,6 +17,7 @@ const ICONS: Record<string, string> = {
   PRICE_CHANGED: '💶',
   SHARE_CHANGED: '🔀',
   SETTLEMENT: '🤝',
+  CLAIM_REQUEST: '🙋',
 };
 
 function keyToBytes(base64: string): Uint8Array<ArrayBuffer> {
@@ -102,9 +104,7 @@ export default function NotificationsPage() {
   function open(n: NonNullable<typeof list.data>['items'][number]) {
     if (!n.readAt) markRead.mutate({ id: n.id });
     if (!n.groupId) return;
-    router.push(
-      n.type === 'SETTLEMENT' || !n.entityId ? `/groups/${n.groupId}` : `/groups/${n.groupId}/expenses/${n.entityId}`,
-    );
+    router.push(notificationPath(n.type, n.groupId, n.entityId));
   }
 
   return (

@@ -144,7 +144,11 @@
     "createSessionFailed": "Kunde inte skapa sessionen.",
     "model": "AI model",
     "modelDefault": "default",
-    "modelHint": "If the chosen model fails, the default chain takes over."
+    "modelHint": "If the chosen model fails, the default chain takes over.",
+    "startClaimRequest": "Be alla välja sina poster",
+    "startClaimRequestHint": "Alla i gruppen får en avisering och väljer sina egna poster, samtidigt.",
+    "claimRequestSending": "Skickar…",
+    "claimRequestSent": "Förfrågan skickad till {count, plural, one {# person} other {# personer}}"
   },
   "receipt": {
     "hideImage": "Dölj kvittobild",
@@ -234,7 +238,12 @@
     "cardChargeExplain": "The receipt only decides who carries which part. What gets shared is the amount that actually left the account (with the bank’s rate and fees).",
     "cardChargeRate": "Bank rate: 1 {from} = {rate} {to}",
     "cardChargeVsReference": "(reference rate {rate}, {diff})",
-    "cardChargeShared": "The charged {amount} is shared in the proportions of the receipt."
+    "cardChargeShared": "The charged {amount} is shared in the proportions of the receipt.",
+    "claimNone": "Väntar på gruppen: ingen har valt något än.",
+    "claimStatus": "{people, plural, one {# person har} other {# personer har}} valt {items} av {total} poster.",
+    "applyClaims": "Använd gruppens val",
+    "claimsApplied": "Gruppens val har använts",
+    "pickOwn": "Välj mina poster"
   },
   "splits": {
     "selectAll": "Välj alla",
@@ -242,5 +251,23 @@
     "perPerson": "per person",
     "remaining": "Återstående",
     "total": "Total"
+  },
+  "claim": {
+    "title": "Välj dina poster",
+    "intro": "Tryck på allt du hade från ”{merchant}”. Delade ni något trycker båda på det.",
+    "introBy": "{name} skannade ”{merchant}”. Tryck på allt du hade; delade ni något trycker båda på det.",
+    "receipt": "kvittot",
+    "backToGroup": "Tillbaka till gruppen",
+    "booked": "Det här kvittot är redan bokfört.",
+    "openExpense": "Visa utgift",
+    "sharedBy": "delas av {count}",
+    "yourShare": "Din del: {amount}",
+    "unclaimed": "{count, plural, one {# post} other {# poster}} har ingen valt än",
+    "allClaimed": "Alla poster är valda",
+    "done": "Klar",
+    "shareHint": "Inklusive din del av moms och dricks. Beloppet är slutgiltigt när kvittot bokförs.",
+    "bookHint": "Alla klara?",
+    "bookLink": "Bokför kvittot",
+    "notFound": "Kvittot hittades inte."
   }
 }

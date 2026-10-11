@@ -144,7 +144,11 @@
     "createSessionFailed": "Sitzung konnte nicht erstellt werden.",
     "model": "KI-Modell",
     "modelDefault": "Standard",
-    "modelHint": "Scheitert das gewählte Modell, übernimmt die Standard-Kette."
+    "modelHint": "Scheitert das gewählte Modell, übernimmt die Standard-Kette.",
+    "startClaimRequest": "Abfrage starten: jeder wählt seine Posten",
+    "startClaimRequestHint": "Alle in der Gruppe werden benachrichtigt und wählen ihre eigenen Posten, auch gleichzeitig.",
+    "claimRequestSending": "Wird gesendet…",
+    "claimRequestSent": "Abfrage an {count, plural, one {# Person} other {# Personen}} gesendet"
   },
   "receipt": {
     "hideImage": "Belegbild ausblenden",
@@ -234,7 +238,12 @@
     "cardChargeExplain": "Die Rechnung legt nur fest, wer welchen Anteil trägt. Aufgeteilt wird der Betrag, der wirklich vom Konto abging (mit Kurs und Gebühren der Bank).",
     "cardChargeRate": "Kurs der Bank: 1 {from} = {rate} {to}",
     "cardChargeVsReference": "(Referenzkurs {rate}, {diff})",
-    "cardChargeShared": "Aufgeteilt werden die abgebuchten {amount} im Verhältnis der Rechnung."
+    "cardChargeShared": "Aufgeteilt werden die abgebuchten {amount} im Verhältnis der Rechnung.",
+    "claimNone": "Abfrage läuft: noch hat niemand etwas gewählt.",
+    "claimStatus": "{people, plural, one {# Person hat} other {# Personen haben}} {items} von {total} Posten gewählt.",
+    "applyClaims": "Auswahl der Gruppe übernehmen",
+    "claimsApplied": "Auswahl der Gruppe übernommen",
+    "pickOwn": "Eigene Posten wählen"
   },
   "splits": {
     "selectAll": "Alle auswählen",
@@ -242,5 +251,23 @@
     "perPerson": "pro Person",
     "remaining": "Verbleibend",
     "total": "Gesamt"
+  },
+  "claim": {
+    "title": "Wähle deine Posten",
+    "intro": "Tippe auf alles, was du von „{merchant}“ hattest. Habt ihr etwas geteilt, tippen beide darauf.",
+    "introBy": "{name} hat „{merchant}“ gescannt. Tippe auf alles, was du hattest. Habt ihr etwas geteilt, tippen beide darauf.",
+    "receipt": "dem Beleg",
+    "backToGroup": "Zur Gruppe",
+    "booked": "Dieser Beleg ist schon gebucht.",
+    "openExpense": "Ausgabe ansehen",
+    "sharedBy": "geteilt durch {count}",
+    "yourShare": "Dein Anteil: {amount}",
+    "unclaimed": "{count, plural, one {# Posten hat} other {# Posten hat}} noch niemand gewählt",
+    "allClaimed": "Alle Posten sind gewählt",
+    "done": "Fertig",
+    "shareHint": "Inklusive deinem Teil an Steuer und Trinkgeld. Der Betrag steht fest, sobald der Beleg gebucht ist.",
+    "bookHint": "Alle fertig?",
+    "bookLink": "Beleg buchen",
+    "notFound": "Dieser Beleg wurde nicht gefunden."
   }
 }

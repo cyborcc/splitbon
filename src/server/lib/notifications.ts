@@ -1,19 +1,20 @@
 import webpush from 'web-push';
 import type { PrismaClient } from '@/generated/prisma/client';
 import { formatCents } from '@/lib/money';
+import { notificationPath } from '@/lib/notification-path';
 import { logger } from './logger';
 
 /**
  * What happened. Only these reach a person: an expense they are in, a changed price, a changed split
- * (their own share), a payment to them.
+ * (their own share), a payment to them, a request to pick their own lines of a scanned receipt.
  */
-export type NotifyKind = 'EXPENSE_ADDED' | 'PRICE_CHANGED' | 'SHARE_CHANGED' | 'SETTLEMENT';
+export type NotifyKind = 'EXPENSE_ADDED' | 'PRICE_CHANGED' | 'SHARE_CHANGED' | 'SETTLEMENT' | 'CLAIM_REQUEST';
 
 export type NotifyItem = {
   userId: string;
   kind: NotifyKind;
   groupId: string;
-  /** Expense id (or settlement id): where the notification leads */
+  /** Expense id (settlement id, receipt id for CLAIM_REQUEST): where the notification leads */
   entityId: string;
   vars: { actor: string; title?: string; amount?: string; share?: string; from?: string; to?: string };
 };
@@ -33,6 +34,10 @@ const TEXTS: Record<'de' | 'en', Record<NotifyKind, (v: NotifyItem['vars']) => {
       body: `Dein Anteil: ${v.from} → ${v.to}`,
     }),
     SETTLEMENT: (v) => ({ title: `${v.actor} hat dir ${v.amount} bezahlt`, body: '' }),
+    CLAIM_REQUEST: (v) => ({
+      title: `${v.actor} bittet dich, deine Posten zu wählen`,
+      body: `„${v.title}“ · tippe, um auszuwählen`,
+    }),
   },
   en: {
     EXPENSE_ADDED: (v) => ({
@@ -48,6 +53,10 @@ const TEXTS: Record<'de' | 'en', Record<NotifyKind, (v: NotifyItem['vars']) => {
       body: `Your share: ${v.from} → ${v.to}`,
     }),
     SETTLEMENT: (v) => ({ title: `${v.actor} paid you ${v.amount}`, body: '' }),
+    CLAIM_REQUEST: (v) => ({
+      title: `${v.actor} asks you to pick your items`,
+      body: `“${v.title}” · tap to choose`,
+    }),
   },
 };
 
@@ -175,10 +184,7 @@ export async function sendNotifications(db: Db, items: NotifyItem[]): Promise<vo
       subs.map(async (sub) => {
         const t = texts.find((x) => x.item.userId === sub.userId);
         if (!t) return;
-        const path =
-          t.item.kind === 'SETTLEMENT'
-            ? `/${t.locale}/groups/${t.item.groupId}`
-            : `/${t.locale}/groups/${t.item.groupId}/expenses/${t.item.entityId}`;
+        const path = `/${t.locale}${notificationPath(t.item.kind, t.item.groupId, t.item.entityId)}`;
         try {
           await webpush.sendNotification(
             { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
