@@ -17,10 +17,10 @@ async function createExpense(ctx: Awaited<ReturnType<typeof authedContext>>, inp
 
 test.describe('Trash bin', () => {
   test('a deleted expense can be restored with its shares and the balances come back', async () => {
-    const g = await createTestGroup(users.alice.email, users.alice.password, [testUsers.bob], `Trash-${Date.now()}`);
+    const g = await createTestGroup(users.alice.email, users.alice.password, [users.bob], `Trash-${Date.now()}`);
     try {
       const aliceId = g.memberIds[users.alice.email]!;
-      const bobId = g.memberIds[testUsers.bob.email]!;
+      const bobId = g.memberIds[users.bob.email]!;
       const created = await createExpense(g.owner, {
         groupId: g.groupId,
         title: 'Dinner',
@@ -62,7 +62,7 @@ test.describe('Trash bin', () => {
   });
 
   test('a member who did not delete or pay cannot restore', async () => {
-    const g = await createTestGroup(users.alice.email, users.alice.password, [testUsers.bob], `Trash-${Date.now()}`);
+    const g = await createTestGroup(users.alice.email, users.alice.password, [users.bob], `Trash-${Date.now()}`);
     try {
       const aliceId = g.memberIds[users.alice.email]!;
       const created = await createExpense(g.owner, {

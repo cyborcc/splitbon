@@ -16,7 +16,6 @@ import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import {
   BarChart3,
   History,
-  Trash2,
   Plus,
   Settings,
   UserPlus,
