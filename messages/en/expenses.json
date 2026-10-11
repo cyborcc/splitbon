@@ -273,7 +273,6 @@
     "onlyOpen": "Show only open items",
     "showAll": "Show all",
     "doneLabel": "Done:",
-    "waitingLabel": "Still picking:",
     "openBadge": "open",
     "finishedToast": "Thanks! Your picks are saved.",
     "openUnits": "{count} still open",
@@ -286,6 +285,8 @@
     "todoDoneMine": "You're done",
     "todoPick": "Pick now",
     "todoView": "View",
-    "todoAllPicked": "Everything is picked, ready to book"
+    "todoAllPicked": "Everything is picked, ready to book",
+    "pickingLabel": "Picking:",
+    "notStartedLabel": "Not started:"
   }
 }

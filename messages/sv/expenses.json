@@ -273,7 +273,6 @@
     "onlyOpen": "Visa bara öppna",
     "showAll": "Visa alla",
     "doneLabel": "Klara:",
-    "waitingLabel": "Väljer fortfarande:",
     "openBadge": "öppen",
     "finishedToast": "Tack! Dina val är sparade.",
     "openUnits": "{count} kvar",
@@ -286,6 +285,8 @@
     "todoDoneMine": "Du är klar",
     "todoPick": "Välj nu",
     "todoView": "Visa",
-    "todoAllPicked": "Allt valt, redo att bokföras"
+    "todoAllPicked": "Allt valt, redo att bokföras",
+    "pickingLabel": "Väljer just nu:",
+    "notStartedLabel": "Inte börjat:"
   }
 }

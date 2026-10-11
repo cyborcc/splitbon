@@ -32,6 +32,15 @@ export default function ClaimReceiptPage({ params }: { params: Promise<{ groupId
   const group = trpc.groups.get.useQuery({ groupId });
   const receiptData = trpc.receipts.getReceiptItems.useQuery({ receiptId });
   const claims = trpc.receipts.getClaims.useQuery({ receiptId }, { refetchInterval: 4000 });
+  // Amounts in the group currency too, at the same rate as the receipt page
+  const groupCurrency = group.data?.currency?.toUpperCase() ?? '';
+  const receiptCurrency = receiptData.data?.receipt.extractedData?.currency?.toUpperCase() ?? '';
+  const foreign = !!groupCurrency && !!receiptCurrency && groupCurrency !== receiptCurrency;
+  const conversion = trpc.receipts.getConversionPreview.useQuery(
+    { groupId, receiptId },
+    { enabled: foreign, staleTime: 60_000 },
+  );
+  const rate = foreign ? (conversion.data?.groupRate?.rate ?? null) : null;
 
   const setClaim = trpc.receipts.setClaim.useMutation({
     onMutate: async ({ receiptItemId, claimed, units }) => {
@@ -78,6 +87,14 @@ export default function ClaimReceiptPage({ params }: { params: Promise<{ groupId
       return `${(cents / 100).toFixed(2)} ${currency}`;
     }
   };
+  const fmtGroup = (cents: number) => {
+    if (rate === null) return null;
+    try {
+      return formatCents(Math.round(cents * rate), groupCurrency, locale);
+    } catch {
+      return null;
+    }
+  };
   const members = new Map(
     (group.data?.members ?? []).map((m) => [
       m.user.id,
@@ -104,6 +121,10 @@ export default function ClaimReceiptPage({ params }: { params: Promise<{ groupId
   const iAmDone = !!myId && claims.data.done.includes(myId);
   const shown = onlyOpen ? items.filter((i) => openOf(i) > 0) : items;
   const nameOf = (id: string) => members.get(id)?.name ?? '?';
+  // Not done yet: who already picked something, and who has not started
+  const pickedSomething = new Set(claims.data.claims.map((c) => c.userId));
+  const picking = claims.data.waiting.filter((id) => pickedSomething.has(id));
+  const notStarted = claims.data.waiting.filter((id) => !pickedSomething.has(id));
 
   return (
     <div className="mx-auto max-w-2xl space-y-4 pb-28">
@@ -163,9 +184,14 @@ export default function ClaimReceiptPage({ params }: { params: Promise<{ groupId
                   ✅ {t('doneLabel')} {claims.data.done.map(nameOf).join(', ')}
                 </p>
               )}
-              {claims.data.waiting.length > 0 && (
+              {picking.length > 0 && (
                 <p>
-                  ⏳ {t('waitingLabel')} {claims.data.waiting.map(nameOf).join(', ')}
+                  ✏️ {t('pickingLabel')} {picking.map(nameOf).join(', ')}
+                </p>
+              )}
+              {notStarted.length > 0 && (
+                <p>
+                  ⏳ {t('notStartedLabel')} {notStarted.map(nameOf).join(', ')}
                 </p>
               )}
             </div>
@@ -241,6 +267,9 @@ export default function ClaimReceiptPage({ params }: { params: Promise<{ groupId
               </button>
               <div className="flex shrink-0 flex-col items-end gap-1">
                 <span className="text-sm font-semibold tabular-nums">{fmt(item.totalPrice)}</span>
+                {fmtGroup(item.totalPrice) && (
+                  <span className="text-xs tabular-nums text-muted-foreground">≈ {fmtGroup(item.totalPrice)}</span>
+                )}
                 {several && mine && (
                   <span className="inline-flex items-center gap-1" data-testid={`claim-units-${item.id}`}>
                     <Button
@@ -281,6 +310,11 @@ export default function ClaimReceiptPage({ params }: { params: Promise<{ groupId
           <div className="min-w-0">
             <p className="font-semibold" data-testid="claim-my-share">
               {t('yourShare', { amount: fmt(myShare) })}
+              {fmtGroup(myShare) && (
+                <span className="ml-1 text-sm font-normal text-muted-foreground" data-testid="claim-my-share-group">
+                  ≈ {fmtGroup(myShare)}
+                </span>
+              )}
             </p>
             <p className="text-xs text-muted-foreground">
               {unclaimed > 0 ? t('unclaimed', { count: unclaimed }) : t('allClaimed')}

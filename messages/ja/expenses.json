@@ -273,7 +273,6 @@
     "onlyOpen": "未選択のみ表示",
     "showAll": "すべて表示",
     "doneLabel": "完了：",
-    "waitingLabel": "選択中：",
     "openBadge": "未選択",
     "finishedToast": "ありがとう！選択を保存しました。",
     "openUnits": "残り{count}",
@@ -286,6 +285,8 @@
     "todoDoneMine": "あなたは完了",
     "todoPick": "今すぐ選ぶ",
     "todoView": "見る",
-    "todoAllPicked": "すべて選択済み、登録できます"
+    "todoAllPicked": "すべて選択済み、登録できます",
+    "pickingLabel": "選択中：",
+    "notStartedLabel": "未着手："
   }
 }

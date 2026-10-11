@@ -273,7 +273,6 @@
     "onlyOpen": "Afficher seulement les articles restants",
     "showAll": "Tout afficher",
     "doneLabel": "Terminé :",
-    "waitingLabel": "Choisit encore :",
     "openBadge": "libre",
     "finishedToast": "Merci ! Tes choix sont enregistrés.",
     "openUnits": "encore {count} libre(s)",
@@ -286,6 +285,8 @@
     "todoDoneMine": "Tu as terminé",
     "todoPick": "Choisir",
     "todoView": "Voir",
-    "todoAllPicked": "Tout est choisi, prêt à enregistrer"
+    "todoAllPicked": "Tout est choisi, prêt à enregistrer",
+    "pickingLabel": "En train de choisir :",
+    "notStartedLabel": "Pas encore commencé :"
   }
 }

@@ -273,7 +273,6 @@
     "onlyOpen": "只显示未选项目",
     "showAll": "显示全部",
     "doneLabel": "已完成：",
-    "waitingLabel": "仍在选择：",
     "openBadge": "未选",
     "finishedToast": "谢谢！你的选择已保存。",
     "openUnits": "还剩 {count}",
@@ -286,6 +285,8 @@
     "todoDoneMine": "你已完成",
     "todoPick": "立即选择",
     "todoView": "查看",
-    "todoAllPicked": "全部已选，可以记账"
+    "todoAllPicked": "全部已选，可以记账",
+    "pickingLabel": "正在选择：",
+    "notStartedLabel": "尚未开始："
   }
 }

@@ -273,7 +273,6 @@
     "onlyOpen": "Nur offene zeigen",
     "showAll": "Alle zeigen",
     "doneLabel": "Fertig:",
-    "waitingLabel": "Wählt noch:",
     "openBadge": "offen",
     "finishedToast": "Danke! Deine Auswahl ist gespeichert.",
     "openUnits": "noch {count} offen",
@@ -286,6 +285,8 @@
     "todoDoneMine": "Du bist fertig",
     "todoPick": "Jetzt wählen",
     "todoView": "Ansehen",
-    "todoAllPicked": "Alles verteilt, bereit zum Buchen"
+    "todoAllPicked": "Alles verteilt, bereit zum Buchen",
+    "pickingLabel": "Wählt gerade:",
+    "notStartedLabel": "Noch nicht angefangen:"
   }
 }

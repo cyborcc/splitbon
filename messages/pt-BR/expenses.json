@@ -273,7 +273,6 @@
     "onlyOpen": "Mostrar só os pendentes",
     "showAll": "Mostrar todos",
     "doneLabel": "Prontos:",
-    "waitingLabel": "Ainda escolhendo:",
     "openBadge": "pendente",
     "finishedToast": "Obrigado! Suas escolhas foram salvas.",
     "openUnits": "faltam {count}",
@@ -286,6 +285,8 @@
     "todoDoneMine": "Você terminou",
     "todoPick": "Escolher agora",
     "todoView": "Ver",
-    "todoAllPicked": "Tudo escolhido, pronto para lançar"
+    "todoAllPicked": "Tudo escolhido, pronto para lançar",
+    "pickingLabel": "Escolhendo:",
+    "notStartedLabel": "Ainda não começou:"
   }
 }
