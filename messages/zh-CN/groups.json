@@ -77,7 +77,8 @@
     "yesterday": "Yesterday",
     "noneForFilter": "No expenses for this person.",
     "history": "History",
-    "trash": "回收站"
+    "trash": "回收站",
+    "claimRunning": "选择中"
   },
   "settings": {
     "title": "群组设置",
@@ -297,6 +298,15 @@
     "restore": "恢复",
     "restored": "支出已恢复。",
     "deletedBy": "{name} 于 {date} 删除",
-    "daysLeft": "{count, plural, other {剩余 # 天}}"
+    "daysLeft": "{count, plural, other {剩余 # 天}}",
+    "date": "日期",
+    "paidBy": "付款人",
+    "inGroupCurrency": "群组货币",
+    "category": "类别",
+    "place": "地点",
+    "note": "备注",
+    "receipt": "收据",
+    "receiptKept": "已关联，恢复时一并恢复",
+    "shares": "分摊"
   }
 }

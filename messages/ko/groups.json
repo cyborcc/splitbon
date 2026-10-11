@@ -77,7 +77,8 @@
     "yesterday": "Yesterday",
     "noneForFilter": "No expenses for this person.",
     "history": "History",
-    "trash": "휴지통"
+    "trash": "휴지통",
+    "claimRunning": "선택 중"
   },
   "settings": {
     "title": "그룹 설정",
@@ -297,6 +298,15 @@
     "restore": "복원",
     "restored": "지출을 복원했습니다.",
     "deletedBy": "{name}님이 {date}에 삭제",
-    "daysLeft": "{count, plural, other {#일 남음}}"
+    "daysLeft": "{count, plural, other {#일 남음}}",
+    "date": "날짜",
+    "paidBy": "결제자",
+    "inGroupCurrency": "그룹 통화",
+    "category": "카테고리",
+    "place": "장소",
+    "note": "메모",
+    "receipt": "영수증",
+    "receiptKept": "연결됨, 복원 시 함께 돌아옴",
+    "shares": "분담"
   }
 }

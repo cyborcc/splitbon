@@ -1460,6 +1460,7 @@ export const receiptsRouter = createTRPCRouter({
       createdAt: r.createdAt,
       groupCurrency: group.currency,
       groupTotal: groupTotals.get(r.id) ?? null,
+      claimRequestedAt: r.claimRequestedAt,
       extractedData: r.extractedData as {
         merchantName?: string;
         merchantAddress?: string;

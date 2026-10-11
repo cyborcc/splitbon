@@ -77,7 +77,8 @@
     "yesterday": "Yesterday",
     "noneForFilter": "No expenses for this person.",
     "history": "History",
-    "trash": "Papperskorg"
+    "trash": "Papperskorg",
+    "claimRunning": "Val pågår"
   },
   "settings": {
     "title": "Gruppinställningar",
@@ -297,6 +298,15 @@
     "restore": "Återställ",
     "restored": "Utgiften återställdes.",
     "deletedBy": "Borttagen av {name} den {date}",
-    "daysLeft": "{count, plural, one {# dag kvar} other {# dagar kvar}}"
+    "daysLeft": "{count, plural, one {# dag kvar} other {# dagar kvar}}",
+    "date": "Datum",
+    "paidBy": "Betalt av",
+    "inGroupCurrency": "I gruppens valuta",
+    "category": "Kategori",
+    "place": "Plats",
+    "note": "Anteckning",
+    "receipt": "Kvitto",
+    "receiptKept": "länkat, följer med vid återställning",
+    "shares": "Fördelning"
   }
 }

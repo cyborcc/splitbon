@@ -77,7 +77,8 @@
     "yesterday": "Yesterday",
     "noneForFilter": "No expenses for this person.",
     "history": "History",
-    "trash": "Trash"
+    "trash": "Trash",
+    "claimRunning": "Picking"
   },
   "settings": {
     "title": "Group Settings",
@@ -297,6 +298,15 @@
     "restore": "Restore",
     "restored": "Expense restored.",
     "deletedBy": "Deleted by {name} on {date}",
-    "daysLeft": "{count, plural, one {# day left} other {# days left}}"
+    "daysLeft": "{count, plural, one {# day left} other {# days left}}",
+    "date": "Date",
+    "paidBy": "Paid by",
+    "inGroupCurrency": "In group currency",
+    "category": "Category",
+    "place": "Place",
+    "note": "Note",
+    "receipt": "Receipt",
+    "receiptKept": "linked, comes back on restore",
+    "shares": "Split"
   }
 }

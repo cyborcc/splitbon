@@ -77,7 +77,8 @@
     "yesterday": "Yesterday",
     "noneForFilter": "No expenses for this person.",
     "history": "History",
-    "trash": "Corbeille"
+    "trash": "Corbeille",
+    "claimRunning": "Choix en cours"
   },
   "settings": {
     "title": "Paramètres du groupe",
@@ -297,6 +298,15 @@
     "restore": "Restaurer",
     "restored": "Dépense restaurée.",
     "deletedBy": "Supprimée par {name} le {date}",
-    "daysLeft": "{count, plural, one {# jour restant} other {# jours restants}}"
+    "daysLeft": "{count, plural, one {# jour restant} other {# jours restants}}",
+    "date": "Date",
+    "paidBy": "Payé par",
+    "inGroupCurrency": "Dans la devise du groupe",
+    "category": "Catégorie",
+    "place": "Lieu",
+    "note": "Note",
+    "receipt": "Ticket",
+    "receiptKept": "lié, revient à la restauration",
+    "shares": "Répartition"
   }
 }

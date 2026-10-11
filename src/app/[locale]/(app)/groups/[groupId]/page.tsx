@@ -547,6 +547,15 @@ export default function GroupDetailPage({ params }: { params: Promise<{ groupId:
                       {t('detail.savedForLater')}
                     </p>
                   </Link>
+                  {r.claimRequestedAt && (
+                    <Link
+                      href={`/groups/${groupId}/receipts/${r.id}/claim`}
+                      className="ml-2 shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-900/40 dark:text-amber-300"
+                      data-testid="pending-receipt-claim-badge"
+                    >
+                      🙋 {t('detail.claimRunning')}
+                    </Link>
+                  )}
                   <div className="flex items-center gap-3 ml-3">
                     <div className="text-right">
                       <p className="text-lg font-semibold" data-testid="pending-receipt-total">

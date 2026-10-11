@@ -77,7 +77,8 @@
     "yesterday": "Yesterday",
     "noneForFilter": "No expenses for this person.",
     "history": "History",
-    "trash": "ゴミ箱"
+    "trash": "ゴミ箱",
+    "claimRunning": "選択中"
   },
   "settings": {
     "title": "グループ設定",
@@ -297,6 +298,15 @@
     "restore": "元に戻す",
     "restored": "支出を元に戻しました。",
     "deletedBy": "{name} が {date} に削除",
-    "daysLeft": "{count, plural, other {残り#日}}"
+    "daysLeft": "{count, plural, other {残り#日}}",
+    "date": "日付",
+    "paidBy": "支払った人",
+    "inGroupCurrency": "グループ通貨",
+    "category": "カテゴリ",
+    "place": "場所",
+    "note": "メモ",
+    "receipt": "レシート",
+    "receiptKept": "リンク済み、復元時に戻ります",
+    "shares": "内訳"
   }
 }

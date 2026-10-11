@@ -33,6 +33,8 @@ test.describe('Trash bin', () => {
       const trash = await trpcResult(await trpcQuery(g.owner, 'expenses.listTrash', { groupId: g.groupId }));
       expect(trash).toHaveLength(1);
       expect(trash[0]).toMatchObject({ expenseId: created.id, title: 'Dinner', amount: 4000, daysLeft: 30 });
+      expect(trash[0].details.shares).toHaveLength(2);
+      expect(trash[0].details.paidByName).toBeTruthy();
 
       // restore
       const restored = await trpcMutation(g.owner, 'expenses.restore', { groupId: g.groupId, expenseId: created.id });

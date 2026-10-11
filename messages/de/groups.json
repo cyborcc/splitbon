@@ -77,7 +77,8 @@
     "yesterday": "Gestern",
     "noneForFilter": "Keine Ausgaben für diese Person.",
     "history": "Verlauf",
-    "trash": "Papierkorb"
+    "trash": "Papierkorb",
+    "claimRunning": "Aufruf läuft"
   },
   "settings": {
     "title": "Gruppeneinstellungen",
@@ -297,6 +298,15 @@
     "restore": "Wiederherstellen",
     "restored": "Ausgabe wiederhergestellt.",
     "deletedBy": "Gelöscht von {name} am {date}",
-    "daysLeft": "{count, plural, one {# Tag übrig} other {# Tage übrig}}"
+    "daysLeft": "{count, plural, one {# Tag übrig} other {# Tage übrig}}",
+    "date": "Datum",
+    "paidBy": "Bezahlt von",
+    "inGroupCurrency": "In Gruppenwährung",
+    "category": "Kategorie",
+    "place": "Ort",
+    "note": "Notiz",
+    "receipt": "Beleg",
+    "receiptKept": "verknüpft, kommt beim Wiederherstellen mit",
+    "shares": "Aufteilung"
   }
 }

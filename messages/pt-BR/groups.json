@@ -77,7 +77,8 @@
     "yesterday": "Yesterday",
     "noneForFilter": "No expenses for this person.",
     "history": "History",
-    "trash": "Lixeira"
+    "trash": "Lixeira",
+    "claimRunning": "Escolha em andamento"
   },
   "settings": {
     "title": "Configurações do grupo",
@@ -297,6 +298,15 @@
     "restore": "Restaurar",
     "restored": "Despesa restaurada.",
     "deletedBy": "Excluída por {name} em {date}",
-    "daysLeft": "{count, plural, one {falta # dia} other {faltam # dias}}"
+    "daysLeft": "{count, plural, one {falta # dia} other {faltam # dias}}",
+    "date": "Data",
+    "paidBy": "Pago por",
+    "inGroupCurrency": "Na moeda do grupo",
+    "category": "Categoria",
+    "place": "Local",
+    "note": "Nota",
+    "receipt": "Recibo",
+    "receiptKept": "vinculado, volta ao restaurar",
+    "shares": "Divisão"
   }
 }

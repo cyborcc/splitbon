@@ -775,7 +775,18 @@ export const expensesRouter = createTRPCRouter({
       orderBy: { deletedAt: 'desc' },
       take: 200,
     });
-    const userIds = [...new Set(rows.map((r) => r.deletedById).filter((id): id is string => !!id))];
+    const snapshots = new Map(
+      rows.map((r) => {
+        const parsed = deletedExpenseSnapshotSchema.safeParse(r.snapshot);
+        return [r.id, parsed.success ? parsed.data : null] as const;
+      }),
+    );
+    const userIds = [
+      ...new Set([
+        ...rows.map((r) => r.deletedById).filter((id): id is string => !!id),
+        ...[...snapshots.values()].flatMap((sn) => (sn ? [sn.paidById, ...sn.shares.map((sh) => sh.userId)] : [])),
+      ]),
+    ];
     const users = userIds.length
       ? await ctx.db.user.findMany({
           where: { id: { in: userIds } },
@@ -793,6 +804,20 @@ export const expensesRouter = createTRPCRouter({
       daysLeft: trashDaysLeft(r.deletedAt),
       deletedByName: r.deletedById ? (names.get(r.deletedById) ?? null) : null,
       canRestore: isOwnerOrAdmin || r.deletedById === ctx.user.id || r.paidById === ctx.user.id,
+      details: (() => {
+        const sn = snapshots.get(r.id);
+        if (!sn) return null;
+        return {
+          expenseDate: sn.expenseDate,
+          category: sn.category,
+          placeName: sn.placeName,
+          description: sn.description,
+          paidByName: names.get(sn.paidById) ?? null,
+          baseCurrencyAmount: sn.baseCurrencyAmount,
+          hasReceipt: !!sn.receiptId,
+          shares: sn.shares.map((sh) => ({ name: names.get(sh.userId) ?? null, amount: sh.amount })),
+        };
+      })(),
     }));
   }),
 

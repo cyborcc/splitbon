@@ -77,7 +77,8 @@
     "yesterday": "Yesterday",
     "noneForFilter": "No expenses for this person.",
     "history": "History",
-    "trash": "Papelera"
+    "trash": "Papelera",
+    "claimRunning": "Elección en curso"
   },
   "settings": {
     "title": "Configuración del grupo",
@@ -297,6 +298,15 @@
     "restore": "Restaurar",
     "restored": "Gasto restaurado.",
     "deletedBy": "Eliminado por {name} el {date}",
-    "daysLeft": "{count, plural, one {queda # día} other {quedan # días}}"
+    "daysLeft": "{count, plural, one {queda # día} other {quedan # días}}",
+    "date": "Fecha",
+    "paidBy": "Pagado por",
+    "inGroupCurrency": "En la moneda del grupo",
+    "category": "Categoría",
+    "place": "Lugar",
+    "note": "Nota",
+    "receipt": "Ticket",
+    "receiptKept": "vinculado, vuelve al restaurar",
+    "shares": "Reparto"
   }
 }
