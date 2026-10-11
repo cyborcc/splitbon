@@ -3,12 +3,12 @@
 import { use, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useSession } from 'next-auth/react';
-import { ArrowLeft, Check } from 'lucide-react';
+import { ArrowLeft, Check, Minus, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { Link, useRouter } from '@/i18n/navigation';
 import { trpc } from '@/lib/trpc';
 import { formatCents } from '@/lib/money';
-import { claimShare } from '@/lib/receipt-claims';
+import { claimShare, openUnits } from '@/lib/receipt-claims';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -34,14 +34,15 @@ export default function ClaimReceiptPage({ params }: { params: Promise<{ groupId
   const claims = trpc.receipts.getClaims.useQuery({ receiptId }, { refetchInterval: 4000 });
 
   const setClaim = trpc.receipts.setClaim.useMutation({
-    onMutate: async ({ receiptItemId, claimed }) => {
+    onMutate: async ({ receiptItemId, claimed, units }) => {
       await utils.receipts.getClaims.cancel({ receiptId });
       const previous = utils.receipts.getClaims.getData({ receiptId });
+      const next = units ?? (claimed ? 1 : 0);
       if (previous && myId) {
         const rest = previous.claims.filter((c) => !(c.receiptItemId === receiptItemId && c.userId === myId));
         utils.receipts.getClaims.setData(
           { receiptId },
-          { ...previous, claims: claimed ? [...rest, { receiptItemId, userId: myId }] : rest },
+          { ...previous, claims: next > 0 ? [...rest, { receiptItemId, userId: myId, units: next }] : rest },
         );
       }
       return { previous };
@@ -83,10 +84,13 @@ export default function ClaimReceiptPage({ params }: { params: Promise<{ groupId
       { id: m.user.id, name: m.user.placeholderName ?? m.user.name ?? m.user.email, image: m.user.image },
     ]),
   );
-  const byItem = new Map<string, string[]>();
-  for (const c of claims.data.claims) byItem.set(c.receiptItemId, [...(byItem.get(c.receiptItemId) ?? []), c.userId]);
+  const byItem = new Map<string, { userId: string; units: number }[]>();
+  for (const c of claims.data.claims) {
+    byItem.set(c.receiptItemId, [...(byItem.get(c.receiptItemId) ?? []), { userId: c.userId, units: c.units }]);
+  }
+  const openOf = (item: { id: string; quantity: number }) => openUnits(item.quantity, byItem.get(item.id) ?? []);
   const booked = !!claims.data.expenseId;
-  const unclaimed = items.filter((i) => !byItem.get(i.id)?.length).length;
+  const unclaimed = items.filter((i) => openOf(i) > 0).length;
   const myShare = myId
     ? claimShare({
         items: items.map((i) => ({ id: i.id, totalPrice: i.totalPrice })),
@@ -98,7 +102,7 @@ export default function ClaimReceiptPage({ params }: { params: Promise<{ groupId
   const merchant = extracted.merchantName?.trim() || t('receipt');
   const requester = claims.data.requestedBy?.name;
   const iAmDone = !!myId && claims.data.done.includes(myId);
-  const shown = onlyOpen ? items.filter((i) => !byItem.get(i.id)?.length) : items;
+  const shown = onlyOpen ? items.filter((i) => openOf(i) > 0) : items;
   const nameOf = (id: string) => members.get(id)?.name ?? '?';
 
   return (
@@ -172,59 +176,102 @@ export default function ClaimReceiptPage({ params }: { params: Promise<{ groupId
       <div className="space-y-2" data-testid="claim-items">
         {shown.map((item) => {
           const claimers = byItem.get(item.id) ?? [];
-          const mine = !!myId && claimers.includes(myId);
+          const myUnits = claimers.find((c) => c.userId === myId)?.units ?? 0;
+          const mine = myUnits > 0;
+          const several = item.quantity > 1;
+          const open = openOf(item);
+          const locked = booked || !myId;
           return (
-            <button
+            <div
               key={item.id}
-              type="button"
-              disabled={booked || !myId}
-              aria-pressed={mine}
-              onClick={() => setClaim.mutate({ receiptItemId: item.id, claimed: !mine })}
               className={cn(
-                'flex w-full items-center gap-3 rounded-xl border p-3 text-left transition-colors',
+                'flex items-center gap-2 rounded-xl border p-3 transition-colors',
                 mine ? 'border-primary bg-primary/10' : 'hover:bg-muted/60',
-                !mine && claimers.length === 0 && 'border-dashed border-amber-500/60',
+                !mine && open > 0 && 'border-dashed border-amber-500/60',
                 booked && 'opacity-70',
               )}
-              data-testid={`claim-item-${item.id}`}
             >
-              <span
-                className={cn(
-                  'flex h-6 w-6 shrink-0 items-center justify-center rounded-md border',
-                  mine ? 'border-primary bg-primary text-primary-foreground' : 'border-muted-foreground/40',
-                )}
+              <button
+                type="button"
+                disabled={locked}
+                aria-pressed={mine}
+                onClick={() => setClaim.mutate({ receiptItemId: item.id, units: mine ? 0 : 1 })}
+                className="flex min-w-0 flex-1 items-center gap-3 text-left"
+                data-testid={`claim-item-${item.id}`}
               >
-                {mine && <Check className="h-4 w-4" />}
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block truncate font-medium">
-                  {item.quantity > 1 ? `${item.quantity}× ` : ''}
-                  {item.name}
-                </span>
-                <span className="mt-1 flex items-center gap-1">
-                  {claimers.map((uid) => {
-                    const m = members.get(uid);
-                    return (
-                      <UserAvatar
-                        key={uid}
-                        id={uid}
-                        image={m?.image}
-                        name={m?.name}
-                        {...(m?.name ? { title: m.name } : {})}
-                        className="h-5 w-5 text-[9px]"
-                      />
-                    );
-                  })}
-                  {claimers.length === 0 && (
-                    <span className="text-xs font-medium text-amber-600 dark:text-amber-400">{t('openBadge')}</span>
+                <span
+                  className={cn(
+                    'flex h-6 w-6 shrink-0 items-center justify-center rounded-md border',
+                    mine ? 'border-primary bg-primary text-primary-foreground' : 'border-muted-foreground/40',
                   )}
-                  {claimers.length > 1 && (
-                    <span className="text-xs text-muted-foreground">{t('sharedBy', { count: claimers.length })}</span>
-                  )}
+                >
+                  {mine && <Check className="h-4 w-4" />}
                 </span>
-              </span>
-              <span className="shrink-0 text-sm font-semibold tabular-nums">{fmt(item.totalPrice)}</span>
-            </button>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate font-medium">
+                    {several ? `${item.quantity}× ` : ''}
+                    {item.name}
+                  </span>
+                  <span className="mt-1 flex flex-wrap items-center gap-1">
+                    {claimers.map(({ userId: uid, units }) => {
+                      const m = members.get(uid);
+                      return (
+                        <span key={uid} className="inline-flex items-center gap-0.5">
+                          <UserAvatar
+                            id={uid}
+                            image={m?.image}
+                            name={m?.name}
+                            {...(m?.name ? { title: m.name } : {})}
+                            className="h-5 w-5 text-[9px]"
+                          />
+                          {several && <span className="text-[10px] tabular-nums text-muted-foreground">{units}×</span>}
+                        </span>
+                      );
+                    })}
+                    {open > 0 && (
+                      <span className="text-xs font-medium text-amber-600 dark:text-amber-400">
+                        {several && claimers.length > 0 ? t('openUnits', { count: open }) : t('openBadge')}
+                      </span>
+                    )}
+                    {!several && claimers.length > 1 && (
+                      <span className="text-xs text-muted-foreground">{t('sharedBy', { count: claimers.length })}</span>
+                    )}
+                  </span>
+                </span>
+              </button>
+              <div className="flex shrink-0 flex-col items-end gap-1">
+                <span className="text-sm font-semibold tabular-nums">{fmt(item.totalPrice)}</span>
+                {several && mine && (
+                  <span className="inline-flex items-center gap-1" data-testid={`claim-units-${item.id}`}>
+                    <Button
+                      type="button"
+                      size="icon"
+                      variant="outline"
+                      className="h-7 w-7"
+                      disabled={locked}
+                      aria-label={t('lessUnits')}
+                      onClick={() => setClaim.mutate({ receiptItemId: item.id, units: myUnits - 1 })}
+                    >
+                      <Minus className="h-3.5 w-3.5" />
+                    </Button>
+                    <span className="w-6 text-center text-sm tabular-nums" data-testid={`claim-my-units-${item.id}`}>
+                      {myUnits}
+                    </span>
+                    <Button
+                      type="button"
+                      size="icon"
+                      variant="outline"
+                      className="h-7 w-7"
+                      disabled={locked || myUnits >= item.quantity}
+                      aria-label={t('moreUnits')}
+                      onClick={() => setClaim.mutate({ receiptItemId: item.id, units: myUnits + 1 })}
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                    </Button>
+                  </span>
+                )}
+              </div>
+            </div>
           );
         })}
       </div>

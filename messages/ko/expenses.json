@@ -275,6 +275,9 @@
     "doneLabel": "완료:",
     "waitingLabel": "선택 중:",
     "openBadge": "미선택",
-    "finishedToast": "감사합니다! 선택이 저장되었습니다."
+    "finishedToast": "감사합니다! 선택이 저장되었습니다.",
+    "openUnits": "{count}개 남음",
+    "lessUnits": "하나 빼기",
+    "moreUnits": "하나 더"
   }
 }

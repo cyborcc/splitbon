@@ -275,6 +275,9 @@
     "doneLabel": "完了：",
     "waitingLabel": "選択中：",
     "openBadge": "未選択",
-    "finishedToast": "ありがとう！選択を保存しました。"
+    "finishedToast": "ありがとう！選択を保存しました。",
+    "openUnits": "残り{count}",
+    "lessUnits": "1つ減らす",
+    "moreUnits": "1つ増やす"
   }
 }

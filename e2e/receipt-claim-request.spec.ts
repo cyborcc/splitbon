@@ -75,6 +75,19 @@ test('everyone picks their own lines, the organizer applies the picks', async ({
     await second.click();
     await expect(second).toHaveAttribute('aria-pressed', 'true');
 
+    // A line of several: Alice takes 2 of 3 with the + button, Bob the third one
+    const tacos = items.find((i: { quantity: number }) => i.quantity === 3);
+    if (tacos) {
+      await page.getByTestId(`claim-item-${tacos.id}`).click();
+      await expect(page.getByTestId(`claim-my-units-${tacos.id}`)).toHaveText('1');
+      await page.getByTestId(`claim-units-${tacos.id}`).getByRole('button', { name: 'One more' }).click();
+      await expect(page.getByTestId(`claim-my-units-${tacos.id}`)).toHaveText('2');
+      await mutationResult(await trpcMutation(bob, 'receipts.setClaim', { receiptItemId: tacos.id, units: 1 }));
+      const units = await trpcResult(await trpcQuery(owner, 'receipts.getClaims', { receiptId }));
+      const onTacos = units.claims.filter((c: { receiptItemId: string }) => c.receiptItemId === tacos.id);
+      expect(onTacos.map((c: { units: number }) => c.units).sort()).toEqual([1, 2]);
+    }
+
     // On the receipt, the picks become the assignment
     await page.goto(`/en/groups/${groupId}/scan?receiptId=${receiptId}`);
     await expect(page.getByTestId('claim-status')).toBeVisible({ timeout: 30_000 });

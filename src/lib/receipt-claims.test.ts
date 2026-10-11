@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { claimShare, claimsToAssignments } from './receipt-claims';
+import { claimShare, claimsToAssignments, openUnits } from './receipt-claims';
 
 const items = [
   { id: 'pizza', totalPrice: 1200 },
@@ -19,15 +19,34 @@ test('a shared line is split between everyone who picked it, tax and tip follow 
   expect(claimShare({ items, claims, userId: 'c', extra: 400 })).toBe(0);
 });
 
-test('picks become assignments, people outside the group are left out', () => {
-  const result = claimsToAssignments(
+test('units decide how a line of several is split', () => {
+  const beer = [{ id: 'beer', totalPrice: 1500 }];
+  const claims = [
+    { receiptItemId: 'beer', userId: 'a', units: 2 },
+    { receiptItemId: 'beer', userId: 'b', units: 1 },
+  ];
+  expect(claimShare({ items: beer, claims, userId: 'a', extra: 0 })).toBe(1000);
+  expect(claimShare({ items: beer, claims, userId: 'b', extra: 0 })).toBe(500);
+});
+
+test('a line is open until its units are picked', () => {
+  expect(openUnits(1, [])).toBe(1);
+  expect(openUnits(1, [{ units: 1 }, { units: 1 }])).toBe(0);
+  expect(openUnits(3, [{ units: 2 }])).toBe(1);
+  expect(openUnits(3, [{ units: 2 }, { units: 1 }])).toBe(0);
+  expect(openUnits(3, [{ units: 5 }])).toBe(0);
+});
+
+test('picks become assignments and units, people outside the group are left out', () => {
+  const { assignments, counts } = claimsToAssignments(
     [
-      { receiptItemId: 'pizza', userId: 'a' },
-      { receiptItemId: 'pizza', userId: 'b' },
+      { receiptItemId: 'pizza', userId: 'a', units: 2 },
+      { receiptItemId: 'pizza', userId: 'b', units: 1 },
       { receiptItemId: 'wine', userId: 'gone' },
     ],
     new Set(['a', 'b']),
   );
-  expect(Object.keys(result)).toEqual(['pizza']);
-  expect([...result.pizza!]).toEqual(['a', 'b']);
+  expect(Object.keys(assignments)).toEqual(['pizza']);
+  expect([...assignments.pizza!]).toEqual(['a', 'b']);
+  expect(counts).toEqual({ pizza: { a: 2 } });
 });

@@ -23,8 +23,9 @@ function fixture(
     groupId?: string | null;
     userId?: string;
     requested?: boolean;
-    lines?: { id: string; claims: { userId: string }[] }[];
+    lines?: { id: string; quantity?: number; claims: { userId: string; units?: number }[] }[];
     done?: string[];
+    quantity?: number;
   } = {},
 ) {
   const receiptId = `receipt-${++receiptCounter}`;
@@ -39,7 +40,7 @@ function fixture(
     claimRequestedById: opts.requested ? 'alice' : null,
     claimsCompleteNotifiedAt: null,
     claimsOpenNotifiedAt: null,
-    items: opts.lines ?? [{ id: 'line', claims: [] }],
+    items: (opts.lines ?? [{ id: 'line', claims: [] }]).map((l) => ({ quantity: 1, ...l })),
     claimsDone: (opts.done ?? []).map((userId) => ({ userId })),
     group: opts.groupId === null ? null : { members: [{ userId: 'alice' }, { userId: 'bob' }, { userId: 'carol' }] },
     extractedData: {
@@ -67,10 +68,10 @@ function fixture(
       createMany: vi.fn(async () => ({ count: 1 })),
       deleteMany: vi.fn(async () => ({ count: 0 })),
     },
-    receiptItem: { findUnique: vi.fn(async () => ({ id: 'line', receiptId })) },
+    receiptItem: { findUnique: vi.fn(async () => ({ id: 'line', receiptId, quantity: opts.quantity ?? 1 })) },
     receiptItemClaim: {
       findMany: vi.fn(async () => [{ receiptItemId: 'line', userId: 'bob' }]),
-      createMany: vi.fn(async () => ({ count: 1 })),
+      upsert: vi.fn(async () => ({})),
       deleteMany: vi.fn(async () => ({ count: 1 })),
     },
     expense: { findUnique: vi.fn(async () => (opts.expense ? { id: 'exp' } : null)) },
@@ -110,9 +111,10 @@ test('a booked receipt or one without a group cannot be shared for picking', asy
 test('a person only adds and removes their own pick', async () => {
   const { caller, db } = fixture({ userId: 'bob' });
   await caller.setClaim({ receiptItemId: 'line', claimed: true });
-  expect(db.receiptItemClaim.createMany).toHaveBeenCalledWith({
-    data: [{ receiptItemId: 'line', userId: 'bob' }],
-    skipDuplicates: true,
+  expect(db.receiptItemClaim.upsert).toHaveBeenCalledWith({
+    where: { receiptItemId_userId: { receiptItemId: 'line', userId: 'bob' } },
+    create: { receiptItemId: 'line', userId: 'bob', units: 1 },
+    update: { units: 1 },
   });
   await caller.setClaim({ receiptItemId: 'line', claimed: false });
   expect(db.receiptItemClaim.deleteMany).toHaveBeenCalledWith({ where: { receiptItemId: 'line', userId: 'bob' } });
@@ -121,7 +123,7 @@ test('a person only adds and removes their own pick', async () => {
 test('picks are closed once the receipt is booked', async () => {
   const { caller, db } = fixture({ expense: true, userId: 'bob' });
   await expect(caller.setClaim({ receiptItemId: 'line', claimed: true })).rejects.toThrow(/already been booked/);
-  expect(db.receiptItemClaim.createMany).not.toHaveBeenCalled();
+  expect(db.receiptItemClaim.upsert).not.toHaveBeenCalled();
 });
 
 test('someone outside the group cannot pick', async () => {
@@ -205,5 +207,25 @@ test('finishing while others still pick sends nothing', async () => {
     done: ['carol'],
   });
   await caller.finishClaims({ receiptId });
+  expect(sendNotifications).not.toHaveBeenCalled();
+});
+
+test('a person picks several units of a line, never more than it has', async () => {
+  const { caller, db } = fixture({ userId: 'bob', quantity: 3 });
+  const result = await caller.setClaim({ receiptItemId: 'line', units: 2 });
+  expect(result).toEqual({ claimed: true, units: 2 });
+  await caller.setClaim({ receiptItemId: 'line', units: 9 });
+  expect(db.receiptItemClaim.upsert).toHaveBeenLastCalledWith(expect.objectContaining({ update: { units: 3 } }));
+  await caller.setClaim({ receiptItemId: 'line', units: 0 });
+  expect(db.receiptItemClaim.deleteMany).toHaveBeenCalledWith({ where: { receiptItemId: 'line', userId: 'bob' } });
+});
+
+test('a line of several stays open until its units are picked', async () => {
+  const { caller } = fixture({
+    userId: 'bob',
+    requested: true,
+    lines: [{ id: 'line', quantity: 3, claims: [{ userId: 'bob', units: 2 }] }],
+  });
+  await caller.setClaim({ receiptItemId: 'line', units: 2 });
   expect(sendNotifications).not.toHaveBeenCalled();
 });

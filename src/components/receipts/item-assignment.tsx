@@ -1020,11 +1020,11 @@ export function ItemAssignment({
                   disabled={claims.data.claims.length === 0}
                   onClick={() => {
                     const picked = claimsToAssignments(claims.data!.claims, new Set(members.map((m) => m.id)));
-                    setAssignments((prev) => ({ ...prev, ...picked }));
+                    setAssignments((prev) => ({ ...prev, ...picked.assignments }));
                     setCounts((prev) => {
                       const next = { ...prev };
-                      for (const itemId of Object.keys(picked)) delete next[itemId];
-                      return next;
+                      for (const itemId of Object.keys(picked.assignments)) delete next[itemId];
+                      return { ...next, ...picked.counts };
                     });
                     toast.success(t('claimsApplied'));
                   }}

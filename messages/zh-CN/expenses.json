@@ -275,6 +275,9 @@
     "doneLabel": "已完成：",
     "waitingLabel": "仍在选择：",
     "openBadge": "未选",
-    "finishedToast": "谢谢！你的选择已保存。"
+    "finishedToast": "谢谢！你的选择已保存。",
+    "openUnits": "还剩 {count}",
+    "lessUnits": "减一",
+    "moreUnits": "加一"
   }
 }

@@ -275,6 +275,9 @@
     "doneLabel": "Listos:",
     "waitingLabel": "Aún eligiendo:",
     "openBadge": "pendiente",
-    "finishedToast": "¡Gracias! Tu selección está guardada."
+    "finishedToast": "¡Gracias! Tu selección está guardada.",
+    "openUnits": "quedan {count}",
+    "lessUnits": "Uno menos",
+    "moreUnits": "Uno más"
   }
 }

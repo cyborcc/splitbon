@@ -275,6 +275,9 @@
     "doneLabel": "Done:",
     "waitingLabel": "Still picking:",
     "openBadge": "open",
-    "finishedToast": "Thanks! Your picks are saved."
+    "finishedToast": "Thanks! Your picks are saved.",
+    "openUnits": "{count} still open",
+    "lessUnits": "One less",
+    "moreUnits": "One more"
   }
 }

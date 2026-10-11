@@ -14,6 +14,7 @@ import { stripUndefined } from '../../lib/strip-undefined';
 import { getUserPromptLanguage } from '../../lib/user-language';
 import { money, sendNotifications, shareChangeItems } from '../../lib/notifications';
 import { checkRateLimit } from '../../lib/rate-limit';
+import { openUnits } from '@/lib/receipt-claims';
 
 /**
  * Verify that a receipt exists and the user has access to it (via group membership).
@@ -90,12 +91,12 @@ async function checkClaimProgress(db: PrismaClient, receiptId: string, actorId: 
       extractedData: true,
       claimRequestedAt: true,
       group: { select: { members: { select: { userId: true } } } },
-      items: { select: { id: true, claims: { select: { userId: true }, take: 1 } } },
+      items: { select: { id: true, quantity: true, claims: { select: { units: true } } } },
       claimsDone: { select: { userId: true } },
     },
   });
   if (!receipt?.groupId || !receipt.group || !receipt.claimRequestedAt || receipt.items.length === 0) return;
-  const open = receipt.items.filter((i) => i.claims.length === 0).length;
+  const open = receipt.items.filter((i) => openUnits(i.quantity, i.claims) > 0).length;
   const members = await realMemberIds(
     db,
     receipt.group.members.map((m) => m.userId),
@@ -1279,7 +1280,7 @@ export const receiptsRouter = createTRPCRouter({
     const [claims, expense, requestedBy, done, members] = await Promise.all([
       ctx.db.receiptItemClaim.findMany({
         where: { receiptItem: { receiptId: receipt.id } },
-        select: { receiptItemId: true, userId: true },
+        select: { receiptItemId: true, userId: true, units: true },
         orderBy: { createdAt: 'asc' },
       }),
       ctx.db.expense.findUnique({ where: { receiptId: receipt.id }, select: { id: true } }),
@@ -1307,15 +1308,24 @@ export const receiptsRouter = createTRPCRouter({
   }),
 
   /**
-   * Marks a line as (not) the signed-in person's own. Each person only changes their own row, so
-   * people picking at the same time never undo each other's picks.
+   * Sets how many units of a line are the signed-in person's (0 = none; `claimed` is the on/off form for
+   * a line of one). Each person only changes their own row, so people picking at the same time never undo
+   * each other's picks.
    */
   setClaim: protectedProcedure
-    .input(z.object({ receiptItemId: z.string(), claimed: z.boolean() }))
+    .input(
+      z
+        .object({
+          receiptItemId: z.string(),
+          claimed: z.boolean().optional(),
+          units: z.number().int().min(0).max(99).optional(),
+        })
+        .refine((v) => v.claimed !== undefined || v.units !== undefined, { message: 'claimed or units' }),
+    )
     .mutation(async ({ ctx, input }) => {
       const item = await ctx.db.receiptItem.findUnique({
         where: { id: input.receiptItemId },
-        select: { id: true, receiptId: true },
+        select: { id: true, receiptId: true, quantity: true },
       });
       if (!item) throw new TRPCError({ code: 'NOT_FOUND' });
       const receipt = await verifyReceiptAccess(ctx.db, item.receiptId, ctx.user.id);
@@ -1324,16 +1334,19 @@ export const receiptsRouter = createTRPCRouter({
       if (expense) {
         throw new TRPCError({ code: 'CONFLICT', message: 'This receipt has already been booked' });
       }
-      if (input.claimed) {
-        await ctx.db.receiptItemClaim.createMany({
-          data: [{ receiptItemId: item.id, userId: ctx.user.id }],
-          skipDuplicates: true,
+      // Nobody can have more units than the line has
+      const units = Math.min(input.units ?? (input.claimed ? 1 : 0), Math.max(item.quantity, 1));
+      if (units > 0) {
+        await ctx.db.receiptItemClaim.upsert({
+          where: { receiptItemId_userId: { receiptItemId: item.id, userId: ctx.user.id } },
+          create: { receiptItemId: item.id, userId: ctx.user.id, units },
+          update: { units },
         });
+        await checkClaimProgress(ctx.db, receipt.id, ctx.user.id);
       } else {
         await ctx.db.receiptItemClaim.deleteMany({ where: { receiptItemId: item.id, userId: ctx.user.id } });
       }
-      if (input.claimed) await checkClaimProgress(ctx.db, receipt.id, ctx.user.id);
-      return { claimed: input.claimed };
+      return { claimed: units > 0, units };
     }),
 
   /** The signed-in person has picked all their lines. When everyone has, the group hears what is left. */

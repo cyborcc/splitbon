@@ -285,6 +285,8 @@ model ReceiptItemClaim {
   id            String   @id @default(cuid())
   receiptItemId String
   userId        String
+  // How many units of the line are this person's (2 of "3x beer"); 1 for a line of one
+  units         Int      @default(1)
   createdAt     DateTime @default(now())
 
   receiptItem ReceiptItem @relation(fields: [receiptItemId], references: [id], onDelete: Cascade)

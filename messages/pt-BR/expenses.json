@@ -275,6 +275,9 @@
     "doneLabel": "Prontos:",
     "waitingLabel": "Ainda escolhendo:",
     "openBadge": "pendente",
-    "finishedToast": "Obrigado! Suas escolhas foram salvas."
+    "finishedToast": "Obrigado! Suas escolhas foram salvas.",
+    "openUnits": "faltam {count}",
+    "lessUnits": "Um a menos",
+    "moreUnits": "Um a mais"
   }
 }

@@ -275,6 +275,9 @@
     "doneLabel": "Terminé :",
     "waitingLabel": "Choisit encore :",
     "openBadge": "libre",
-    "finishedToast": "Merci ! Tes choix sont enregistrés."
+    "finishedToast": "Merci ! Tes choix sont enregistrés.",
+    "openUnits": "encore {count} libre(s)",
+    "lessUnits": "Un de moins",
+    "moreUnits": "Un de plus"
   }
 }
