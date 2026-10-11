@@ -278,6 +278,14 @@
     "finishedToast": "Thanks! Your picks are saved.",
     "openUnits": "{count} still open",
     "lessUnits": "One less",
-    "moreUnits": "One more"
+    "moreUnits": "One more",
+    "todoTitle": "Open requests",
+    "todoAsk": "{name} asks you to pick your items of “{title}”",
+    "todoAskMine": "Picking items of “{title}”",
+    "todoOpen": "{count, plural, one {# item} other {# items}} still open",
+    "todoDoneMine": "You're done",
+    "todoPick": "Pick now",
+    "todoView": "View",
+    "todoAllPicked": "Everything is picked, ready to book"
   }
 }

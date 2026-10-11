@@ -63,6 +63,11 @@ test('everyone picks their own lines, the organizer applies the picks', async ({
 
     // Alice's picking page shows her pick, shared with Bob
     await login(page, users.alice.email, users.alice.password);
+    // The request is also reachable without the notification: dashboard and group page list it
+    await page.goto('/en/dashboard');
+    await expect(page.getByTestId(`open-claim-${receiptId}`)).toBeVisible();
+    await page.goto(`/en/groups/${groupId}`);
+    await expect(page.getByTestId(`open-claim-${receiptId}`)).toBeVisible();
     await page.goto(`/en/groups/${groupId}/receipts/${receiptId}/claim`);
     const first = page.getByTestId(`claim-item-${items[0].id}`);
     await expect(first).toHaveAttribute('aria-pressed', 'true');

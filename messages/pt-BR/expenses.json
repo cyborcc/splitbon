@@ -278,6 +278,14 @@
     "finishedToast": "Obrigado! Suas escolhas foram salvas.",
     "openUnits": "faltam {count}",
     "lessUnits": "Um a menos",
-    "moreUnits": "Um a mais"
+    "moreUnits": "Um a mais",
+    "todoTitle": "Pedidos em aberto",
+    "todoAsk": "{name} pede que você escolha seus itens de “{title}”",
+    "todoAskMine": "Escolha de itens de “{title}”",
+    "todoOpen": "{count, plural, one {# item pendente} other {# itens pendentes}}",
+    "todoDoneMine": "Você terminou",
+    "todoPick": "Escolher agora",
+    "todoView": "Ver",
+    "todoAllPicked": "Tudo escolhido, pronto para lançar"
   }
 }

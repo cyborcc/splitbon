@@ -31,6 +31,7 @@ import { toast } from 'sonner';
 import { InviteDialog } from '@/components/groups/invite-dialog';
 import { SettleDialog } from '@/components/groups/settle-dialog';
 import { BankTransferDialog } from '@/components/groups/bank-transfer-dialog';
+import { OpenClaims } from '@/components/receipts/open-claims';
 import { MySpendingCard } from '@/components/groups/my-spending-card';
 import { BalanceStandings } from '@/components/groups/balance-standings';
 import {
@@ -297,6 +298,8 @@ export default function GroupDetailPage({ params }: { params: Promise<{ groupId:
           </Button>
         </div>
       </div>
+
+      <OpenClaims groupId={groupId} />
 
       {/* Members */}
       <div className="flex flex-wrap gap-2">

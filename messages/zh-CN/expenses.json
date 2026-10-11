@@ -278,6 +278,14 @@
     "finishedToast": "谢谢！你的选择已保存。",
     "openUnits": "还剩 {count}",
     "lessUnits": "减一",
-    "moreUnits": "加一"
+    "moreUnits": "加一",
+    "todoTitle": "进行中的请求",
+    "todoAsk": "{name} 请你选择“{title}”中的项目",
+    "todoAskMine": "选择“{title}”中的项目",
+    "todoOpen": "还有 {count} 项未选",
+    "todoDoneMine": "你已完成",
+    "todoPick": "立即选择",
+    "todoView": "查看",
+    "todoAllPicked": "全部已选，可以记账"
   }
 }

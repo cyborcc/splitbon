@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { ArrowUpRight, ArrowDownLeft, Plus, ChevronRight, TrendingUp, TrendingDown } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
+import { OpenClaims } from '@/components/receipts/open-claims';
 import { UserAvatar } from '@/components/ui/user-avatar';
 
 const GROUPS_PER_PAGE = 6;
@@ -103,6 +104,8 @@ export default function DashboardPage() {
           {t('createGroup')}
         </Button>
       </div>
+
+      <OpenClaims showGroup />
 
       {/* ---- Balance summary cards ---- */}
       <div className="grid gap-4 @2xl:grid-cols-2">

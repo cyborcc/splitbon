@@ -278,6 +278,14 @@
     "finishedToast": "Merci ! Tes choix sont enregistrés.",
     "openUnits": "encore {count} libre(s)",
     "lessUnits": "Un de moins",
-    "moreUnits": "Un de plus"
+    "moreUnits": "Un de plus",
+    "todoTitle": "Demandes en cours",
+    "todoAsk": "{name} te demande de choisir tes articles de « {title} »",
+    "todoAskMine": "Choix des articles de « {title} »",
+    "todoOpen": "{count, plural, one {# article restant} other {# articles restants}}",
+    "todoDoneMine": "Tu as terminé",
+    "todoPick": "Choisir",
+    "todoView": "Voir",
+    "todoAllPicked": "Tout est choisi, prêt à enregistrer"
   }
 }

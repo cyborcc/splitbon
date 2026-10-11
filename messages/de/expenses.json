@@ -278,6 +278,14 @@
     "finishedToast": "Danke! Deine Auswahl ist gespeichert.",
     "openUnits": "noch {count} offen",
     "lessUnits": "Eins weniger",
-    "moreUnits": "Eins mehr"
+    "moreUnits": "Eins mehr",
+    "todoTitle": "Offene Abfragen",
+    "todoAsk": "{name} bittet dich, deine Posten von „{title}“ zu wählen",
+    "todoAskMine": "Posten wählen für „{title}“",
+    "todoOpen": "{count} Posten noch offen",
+    "todoDoneMine": "Du bist fertig",
+    "todoPick": "Jetzt wählen",
+    "todoView": "Ansehen",
+    "todoAllPicked": "Alles verteilt, bereit zum Buchen"
   }
 }

@@ -1361,6 +1361,62 @@ export const receiptsRouter = createTRPCRouter({
     return { done: true };
   }),
 
+  /**
+   * Receipts the signed-in person was asked to pick their lines of and that are not booked yet, for the
+   * dashboard and the group page (optionally one group). The newest first; requests older than 30 days drop off.
+   */
+  listOpenClaims: protectedProcedure
+    .input(z.object({ groupId: z.string().optional() }).optional())
+    .query(async ({ ctx, input }) => {
+      const receipts = await ctx.db.receipt.findMany({
+        where: {
+          claimRequestedAt: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
+          status: 'COMPLETED',
+          expense: null,
+          group: { members: { some: { userId: ctx.user.id } }, archivedAt: null },
+          ...(input?.groupId ? { groupId: input.groupId } : {}),
+        },
+        orderBy: { claimRequestedAt: 'desc' },
+        take: 20,
+        select: {
+          id: true,
+          groupId: true,
+          originalName: true,
+          extractedData: true,
+          claimRequestedById: true,
+          group: { select: { name: true, emoji: true } },
+          items: { select: { quantity: true, claims: { select: { userId: true, units: true } } } },
+          claimsDone: { where: { userId: ctx.user.id }, select: { userId: true } },
+        },
+      });
+      const requesterIds = [...new Set(receipts.map((r) => r.claimRequestedById).filter((id): id is string => !!id))];
+      const requesters = new Map(
+        (await ctx.db.user.findMany({ where: { id: { in: requesterIds } }, select: { id: true, name: true } })).map(
+          (u) => [u.id, u.name],
+        ),
+      );
+      return receipts.map((r) => {
+        let title = r.originalName;
+        try {
+          title = (r.extractedData ? parseExtractedData(r.extractedData).merchantName?.trim() : '') || title;
+        } catch {
+          // keep the file name
+        }
+        return {
+          receiptId: r.id,
+          groupId: r.groupId!,
+          groupName: r.group?.name ?? '',
+          groupEmoji: r.group?.emoji ?? '',
+          title,
+          requestedByName: r.claimRequestedById ? (requesters.get(r.claimRequestedById) ?? null) : null,
+          requestedByMe: r.claimRequestedById === ctx.user.id,
+          open: r.items.filter((i) => openUnits(i.quantity, i.claims) > 0).length,
+          myPicks: r.items.filter((i) => i.claims.some((c) => c.userId === ctx.user.id)).length,
+          iAmDone: r.claimsDone.length > 0,
+        };
+      });
+    }),
+
   listPending: groupMemberProcedure.input(z.object({ groupId: z.string() })).query(async ({ ctx, input }) => {
     const receipts = await ctx.db.receipt.findMany({
       where: {

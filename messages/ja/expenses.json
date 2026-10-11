@@ -278,6 +278,14 @@
     "finishedToast": "ありがとう！選択を保存しました。",
     "openUnits": "残り{count}",
     "lessUnits": "1つ減らす",
-    "moreUnits": "1つ増やす"
+    "moreUnits": "1つ増やす",
+    "todoTitle": "進行中のリクエスト",
+    "todoAsk": "{name}さんが「{title}」の品目選択を依頼しています",
+    "todoAskMine": "「{title}」の品目選択",
+    "todoOpen": "残り{count}品目",
+    "todoDoneMine": "あなたは完了",
+    "todoPick": "今すぐ選ぶ",
+    "todoView": "見る",
+    "todoAllPicked": "すべて選択済み、登録できます"
   }
 }
