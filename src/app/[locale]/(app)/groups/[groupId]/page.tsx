@@ -16,6 +16,7 @@ import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import {
   BarChart3,
   History,
+  Trash2,
   Plus,
   Settings,
   UserPlus,
@@ -287,6 +288,17 @@ export default function GroupDetailPage({ params }: { params: Promise<{ groupId:
           >
             <History className="h-4 w-4 sm:mr-2" />
             <span className="hidden sm:inline">{t('detail.history')}</span>
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            nativeButton={false}
+            render={<Link href={`/groups/${groupId}/trash`} />}
+            title={t('detail.trash')}
+            aria-label={t('detail.trash')}
+            data-testid="trash-btn"
+          >
+            <Trash2 className="h-4 w-4" />
           </Button>
           <Button
             variant="outline"

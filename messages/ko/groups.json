@@ -76,7 +76,8 @@
     "today": "Today",
     "yesterday": "Yesterday",
     "noneForFilter": "No expenses for this person.",
-    "history": "History"
+    "history": "History",
+    "trash": "휴지통"
   },
   "settings": {
     "title": "그룹 설정",
@@ -288,5 +289,14 @@
     "copy": "복사",
     "copyFailed": "복사할 수 없습니다",
     "markPaid": "송금했어요"
+  },
+  "trash": {
+    "title": "휴지통",
+    "hint": "삭제한 지출은 30일 동안 여기에 보관되며 복원할 수 있습니다. 그 후에는 영구 삭제됩니다.",
+    "empty": "휴지통이 비어 있습니다.",
+    "restore": "복원",
+    "restored": "지출을 복원했습니다.",
+    "deletedBy": "{name}님이 {date}에 삭제",
+    "daysLeft": "{count, plural, other {#일 남음}}"
   }
 }

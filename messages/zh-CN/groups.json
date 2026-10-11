@@ -76,7 +76,8 @@
     "today": "Today",
     "yesterday": "Yesterday",
     "noneForFilter": "No expenses for this person.",
-    "history": "History"
+    "history": "History",
+    "trash": "回收站"
   },
   "settings": {
     "title": "群组设置",
@@ -288,5 +289,14 @@
     "copy": "复制",
     "copyFailed": "无法复制",
     "markPaid": "我已付款"
+  },
+  "trash": {
+    "title": "回收站",
+    "hint": "已删除的支出会在这里保留 30 天，可以恢复。之后将被永久删除。",
+    "empty": "回收站是空的。",
+    "restore": "恢复",
+    "restored": "支出已恢复。",
+    "deletedBy": "{name} 于 {date} 删除",
+    "daysLeft": "{count, plural, other {剩余 # 天}}"
   }
 }

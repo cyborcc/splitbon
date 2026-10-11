@@ -76,7 +76,8 @@
     "today": "Today",
     "yesterday": "Yesterday",
     "noneForFilter": "No expenses for this person.",
-    "history": "History"
+    "history": "History",
+    "trash": "Corbeille"
   },
   "settings": {
     "title": "Paramètres du groupe",
@@ -288,5 +289,14 @@
     "copy": "Copier",
     "copyFailed": "Copie impossible",
     "markPaid": "J’ai payé"
+  },
+  "trash": {
+    "title": "Corbeille",
+    "hint": "Les dépenses supprimées restent ici 30 jours et peuvent être restaurées. Ensuite, elles sont définitivement supprimées.",
+    "empty": "La corbeille est vide.",
+    "restore": "Restaurer",
+    "restored": "Dépense restaurée.",
+    "deletedBy": "Supprimée par {name} le {date}",
+    "daysLeft": "{count, plural, one {# jour restant} other {# jours restants}}"
   }
 }

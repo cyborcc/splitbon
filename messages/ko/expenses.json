@@ -147,6 +147,13 @@
     "modelHint": "If the chosen model fails, the default chain takes over.",
     "startClaimRequest": "모두에게 자기 품목을 고르게 하기",
     "startClaimRequestHint": "그룹 모두에게 알림이 가고, 각자 동시에 자기 품목을 고를 수 있습니다.",
+    "assignModeTitle": "이 영수증을 어떻게 배정할까요?",
+    "assignModeSelf": "직접 입력",
+    "assignModeSelfHint": "아래에서 품목을 바로 배정합니다.",
+    "assignModeGroup": "그룹에 묻기",
+    "claimRequestNeedsMembers": "아직 불가: 그룹에 멤버가 2명 이상 필요합니다.",
+    "claimRequestBlocked": "지금은 불가: 먼저 AI 수정을 마치세요.",
+    "claimRequestNoItems": "불가: 이 영수증에는 품목이 없습니다.",
     "claimRequestSending": "보내는 중…",
     "claimRequestSent": "{count}명에게 요청을 보냈습니다"
   },

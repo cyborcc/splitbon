@@ -147,6 +147,13 @@
     "modelHint": "If the chosen model fails, the default chain takes over.",
     "startClaimRequest": "Pedir a todos que elijan sus artículos",
     "startClaimRequestHint": "Todos en el grupo reciben un aviso y eligen sus propios artículos, a la vez.",
+    "assignModeTitle": "¿Cómo quieres asignar este recibo?",
+    "assignModeSelf": "Introducirlo yo",
+    "assignModeSelfHint": "Asigna los artículos directamente aquí abajo.",
+    "assignModeGroup": "Preguntar al grupo",
+    "claimRequestNeedsMembers": "Aún no es posible: el grupo necesita al menos 2 miembros.",
+    "claimRequestBlocked": "Ahora no es posible: termina primero la corrección de la IA.",
+    "claimRequestNoItems": "No es posible: este recibo no tiene artículos.",
     "claimRequestSending": "Enviando…",
     "claimRequestSent": "Solicitud enviada a {count, plural, one {# persona} other {# personas}}"
   },

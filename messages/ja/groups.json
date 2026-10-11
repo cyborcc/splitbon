@@ -76,7 +76,8 @@
     "today": "Today",
     "yesterday": "Yesterday",
     "noneForFilter": "No expenses for this person.",
-    "history": "History"
+    "history": "History",
+    "trash": "ゴミ箱"
   },
   "settings": {
     "title": "グループ設定",
@@ -288,5 +289,14 @@
     "copy": "コピー",
     "copyFailed": "コピーできませんでした",
     "markPaid": "支払いました"
+  },
+  "trash": {
+    "title": "ゴミ箱",
+    "hint": "削除した支出は30日間ここに残り、元に戻せます。その後は完全に削除されます。",
+    "empty": "ゴミ箱は空です。",
+    "restore": "元に戻す",
+    "restored": "支出を元に戻しました。",
+    "deletedBy": "{name} が {date} に削除",
+    "daysLeft": "{count, plural, other {残り#日}}"
   }
 }

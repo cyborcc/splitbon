@@ -107,6 +107,7 @@ model Group {
 
   members      GroupMember[]
   expenses     Expense[]
+  deletedExpenses DeletedExpense[]
   settlements  Settlement[]
   invites      GroupInvite[]
   activityLogs ActivityLog[]
@@ -205,6 +206,27 @@ model ExpenseShare {
 
   @@unique([expenseId, userId])
   @@index([userId])
+}
+
+// Trash: a copy of a deleted expense (with its shares) kept for 30 days so it can be restored.
+// The expense row itself is really deleted, so balances and statistics never see it.
+model DeletedExpense {
+  id           String   @id @default(cuid())
+  groupId      String
+  expenseId    String   @unique // id the expense had (and gets back on restore)
+  deletedById  String?
+  title        String   // copied out of the snapshot for the list
+  amount       Int
+  currency     String
+  isPrivate    Boolean  @default(false)
+  paidById     String
+  snapshot     Json     // see src/server/lib/trash.ts (expense columns + shares)
+  deletedAt    DateTime @default(now())
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@index([groupId, deletedAt(sort: Desc)])
+  @@index([deletedAt])
 }
 
 enum SplitMode {

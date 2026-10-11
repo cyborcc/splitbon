@@ -81,6 +81,7 @@ Backups, upgrades and prebuilt image tags are covered in [Upgrading and backups]
 | 📍 **Places & maps**    | Add where you paid: OpenStreetMap search, GPS, places nearby, a mini map on every expense.                                                |
 | 📊 **Trip statistics**  | Totals, categories, timeline, people, map, budget and a daily-cost forecast.                                                              |
 | 🔔 **Notifications**    | In-app bell plus web push when you are part of a new expense, a price or your share changes, or someone pays you back.                    |
+| 🗑️ **Trash**            | Deleted an expense by mistake? It stays in the group's trash for 30 days and can be restored with all its shares.                         |
 | 🔒 **Private expenses** | Only the payer sees title and amount.                                                                                                     |
 | 🧮 **Settle up**        | Debts are simplified to as few payments as possible; paying records the settlement. Optional Venmo links for US groups.                   |
 | 🌐 **9 languages**      | English, Spanish, Swedish, French, German, Portuguese (BR), Japanese, Chinese, Korean. Dark mode included.                                |

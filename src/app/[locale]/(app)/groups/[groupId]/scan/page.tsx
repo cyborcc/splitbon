@@ -196,6 +196,16 @@ function ScanReceiptContent({ params }: { params: Promise<{ groupId: string }> }
       image: m.user.image,
     })) ?? [];
 
+  // Why "ask the group" is unavailable (null = available); shown instead of a silently greyed-out button
+  const claimRequestReason =
+    members.length < 2
+      ? ('claimRequestNeedsMembers' as const)
+      : correctionBlocked
+        ? ('claimRequestBlocked' as const)
+        : !receiptData.data?.items?.length
+          ? ('claimRequestNoItems' as const)
+          : null;
+
   const configuredProviderChain = providerInfo.data?.configuredProviders?.join(' -> ') ?? 'loading...';
   const activeProvider = providerInfo.data?.activeProvider ?? 'checking...';
 
@@ -341,6 +351,37 @@ function ScanReceiptContent({ params }: { params: Promise<{ groupId: string }> }
               setCorrectionRevision((v) => v + 1);
             }}
           />
+          {!editExpenseId && (
+            <Card data-testid="assign-mode-choice">
+              <CardContent className="space-y-3 py-4">
+                <p className="text-sm font-medium">{t('assignModeTitle')}</p>
+                <div className="grid gap-3 @lg:grid-cols-2">
+                  <div className="rounded-md border p-3 text-sm">
+                    <p className="font-medium">{t('assignModeSelf')}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">{t('assignModeSelfHint')}</p>
+                  </div>
+                  <div className="space-y-2 rounded-md border p-3 text-sm">
+                    <p className="font-medium">{t('assignModeGroup')}</p>
+                    <p className="text-xs text-muted-foreground">{t('startClaimRequestHint')}</p>
+                    <Button
+                      className="w-full"
+                      onClick={() => receiptId && startClaimRequest.mutate({ receiptId })}
+                      disabled={claimRequestReason !== null || startClaimRequest.isPending}
+                      data-testid="start-claim-request-btn"
+                    >
+                      <BellRing className="mr-2 h-4 w-4" />
+                      {startClaimRequest.isPending ? t('claimRequestSending') : t('startClaimRequest')}
+                    </Button>
+                    {claimRequestReason && (
+                      <p className="text-xs text-amber-600 dark:text-amber-400" data-testid="claim-request-reason">
+                        {t(claimRequestReason)}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
           <fieldset disabled={correctionBlocked} className={correctionBlocked ? 'pointer-events-none opacity-60' : ''}>
             {editExpenseId && !editExpense.data ? (
               <LoadingSpinner />
@@ -382,22 +423,6 @@ function ScanReceiptContent({ params }: { params: Promise<{ groupId: string }> }
             <span className="text-xs">{t('or')}</span>
             <div className="flex-1 h-px bg-border" />
           </div>
-          <Button
-            className="w-full"
-            onClick={() => receiptId && startClaimRequest.mutate({ receiptId })}
-            disabled={
-              correctionBlocked ||
-              startClaimRequest.isPending ||
-              !!editExpenseId ||
-              !receiptData.data?.items?.length ||
-              members.length < 2
-            }
-            data-testid="start-claim-request-btn"
-          >
-            <BellRing className="mr-2 h-4 w-4" />
-            {startClaimRequest.isPending ? t('claimRequestSending') : t('startClaimRequest')}
-          </Button>
-          <p className="-mt-2 text-center text-xs text-muted-foreground">{t('startClaimRequestHint')}</p>
           <Button
             variant="outline"
             className="w-full"

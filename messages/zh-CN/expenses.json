@@ -147,6 +147,13 @@
     "modelHint": "If the chosen model fails, the default chain takes over.",
     "startClaimRequest": "请大家各自选择自己的项目",
     "startClaimRequestHint": "群组成员都会收到通知，并可同时选择自己的项目。",
+    "assignModeTitle": "要如何分配这张收据？",
+    "assignModeSelf": "自己填写",
+    "assignModeSelfHint": "直接在下方分配各项目。",
+    "assignModeGroup": "询问群组",
+    "claimRequestNeedsMembers": "暂时无法使用：群组至少需要 2 名成员。",
+    "claimRequestBlocked": "暂时无法使用：请先完成 AI 修正。",
+    "claimRequestNoItems": "无法使用：这张收据没有项目。",
     "claimRequestSending": "发送中…",
     "claimRequestSent": "已向 {count} 人发送请求"
   },

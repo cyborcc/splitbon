@@ -147,6 +147,13 @@
     "modelHint": "If the chosen model fails, the default chain takes over.",
     "startClaimRequest": "全員に自分の品目を選んでもらう",
     "startClaimRequestHint": "グループ全員に通知が届き、各自が同時に自分の品目を選べます。",
+    "assignModeTitle": "このレシートをどう割り当てますか？",
+    "assignModeSelf": "自分で入力",
+    "assignModeSelfHint": "下で品目を直接割り当てます。",
+    "assignModeGroup": "グループに聞く",
+    "claimRequestNeedsMembers": "まだできません：グループに2人以上のメンバーが必要です。",
+    "claimRequestBlocked": "今はできません：先にAI修正を完了してください。",
+    "claimRequestNoItems": "できません：このレシートには品目がありません。",
     "claimRequestSending": "送信中…",
     "claimRequestSent": "{count}人にリクエストを送信しました"
   },

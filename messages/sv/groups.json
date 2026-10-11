@@ -76,7 +76,8 @@
     "today": "Today",
     "yesterday": "Yesterday",
     "noneForFilter": "No expenses for this person.",
-    "history": "History"
+    "history": "History",
+    "trash": "Papperskorg"
   },
   "settings": {
     "title": "Gruppinställningar",
@@ -288,5 +289,14 @@
     "copy": "Kopiera",
     "copyFailed": "Kunde inte kopiera",
     "markPaid": "Jag har betalat"
+  },
+  "trash": {
+    "title": "Papperskorg",
+    "hint": "Borttagna utgifter ligger här i 30 dagar och kan återställas. Därefter raderas de för gott.",
+    "empty": "Papperskorgen är tom.",
+    "restore": "Återställ",
+    "restored": "Utgiften återställdes.",
+    "deletedBy": "Borttagen av {name} den {date}",
+    "daysLeft": "{count, plural, one {# dag kvar} other {# dagar kvar}}"
   }
 }

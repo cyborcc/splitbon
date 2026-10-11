@@ -8,6 +8,7 @@ import { stripUndefined } from '../../lib/strip-undefined';
 import { searchPlacesIndex } from '../../lib/places-search';
 import { money, sendNotifications, shareChangeItems } from '../../lib/notifications';
 import { checkRateLimit } from '../../lib/rate-limit';
+import { buildSnapshot, deletedExpenseSnapshotSchema, purgeExpiredTrash, trashDaysLeft } from '../../lib/trash';
 
 const expenseShareSchema = z.object({
   userId: z.string(),
@@ -719,6 +720,7 @@ export const expensesRouter = createTRPCRouter({
 
       const expense = await ctx.db.expense.findUnique({
         where: { id: input.expenseId },
+        include: { shares: true },
       });
       if (!expense || expense.groupId !== input.groupId) {
         throw new TRPCError({ code: 'NOT_FOUND' });
@@ -734,6 +736,20 @@ export const expensesRouter = createTRPCRouter({
       }
 
       await ctx.db.$transaction(async (tx) => {
+        // Keep a copy in the trash (restorable for 30 days), then really delete the row
+        await tx.deletedExpense.create({
+          data: {
+            groupId: input.groupId,
+            expenseId: expense.id,
+            deletedById: ctx.user.id,
+            title: expense.title,
+            amount: expense.amount,
+            currency: expense.currency,
+            isPrivate: expense.isPrivate,
+            paidById: expense.paidById,
+            snapshot: buildSnapshot(expense),
+          },
+        });
         await tx.expense.delete({ where: { id: input.expenseId } });
 
         await tx.activityLog.create({
@@ -745,6 +761,117 @@ export const expensesRouter = createTRPCRouter({
             ...(expense.isPrivate
               ? {}
               : { metadata: { title: expense.title, amount: expense.amount, currency: expense.currency } }),
+          },
+        });
+      });
+
+      return { success: true };
+    }),
+  // Trash: deleted expenses of this group that can still be restored (private ones only for their payer)
+  listTrash: groupMemberProcedure.input(z.object({ groupId: z.string() })).query(async ({ ctx, input }) => {
+    await purgeExpiredTrash(ctx.db);
+    const rows = await ctx.db.deletedExpense.findMany({
+      where: { groupId: input.groupId, OR: [{ isPrivate: false }, { paidById: ctx.user.id }] },
+      orderBy: { deletedAt: 'desc' },
+      take: 200,
+    });
+    const userIds = [...new Set(rows.map((r) => r.deletedById).filter((id): id is string => !!id))];
+    const users = userIds.length
+      ? await ctx.db.user.findMany({
+          where: { id: { in: userIds } },
+          select: { id: true, name: true, placeholderName: true, email: true },
+        })
+      : [];
+    const names = new Map(users.map((u) => [u.id, u.placeholderName ?? u.name ?? u.email]));
+    const isOwnerOrAdmin = ctx.membership.role === 'OWNER' || ctx.membership.role === 'ADMIN';
+    return rows.map((r) => ({
+      expenseId: r.expenseId,
+      title: r.title,
+      amount: r.amount,
+      currency: r.currency,
+      deletedAt: r.deletedAt,
+      daysLeft: trashDaysLeft(r.deletedAt),
+      deletedByName: r.deletedById ? (names.get(r.deletedById) ?? null) : null,
+      canRestore: isOwnerOrAdmin || r.deletedById === ctx.user.id || r.paidById === ctx.user.id,
+    }));
+  }),
+
+  restore: groupMemberProcedure
+    .input(z.object({ groupId: z.string(), expenseId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const group = await ctx.db.group.findUnique({ where: { id: input.groupId }, select: { archivedAt: true } });
+      if (group?.archivedAt) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Cannot restore expenses in an archived group' });
+      }
+      const entry = await ctx.db.deletedExpense.findUnique({ where: { expenseId: input.expenseId } });
+      if (!entry || entry.groupId !== input.groupId || (entry.isPrivate && entry.paidById !== ctx.user.id)) {
+        throw new TRPCError({ code: 'NOT_FOUND' });
+      }
+      const isOwnerOrAdmin = ctx.membership.role === 'OWNER' || ctx.membership.role === 'ADMIN';
+      if (!isOwnerOrAdmin && entry.deletedById !== ctx.user.id && entry.paidById !== ctx.user.id) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'Only who deleted it, the payer, or group owner/admin can restore this expense',
+        });
+      }
+      const parsed = deletedExpenseSnapshotSchema.safeParse(entry.snapshot);
+      if (!parsed.success) {
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'The saved copy is damaged' });
+      }
+      const snap = parsed.data;
+
+      // Everyone on the expense must still be in the group, or balances would involve outsiders
+      const needed = [...new Set([snap.paidById, ...snap.shares.map((sh) => sh.userId)])];
+      const present = await ctx.db.groupMember.findMany({
+        where: { groupId: input.groupId, userId: { in: needed } },
+        select: { userId: true },
+      });
+      if (present.length !== needed.length) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Someone on this expense has left the group, so it cannot be restored',
+        });
+      }
+
+      await ctx.db.$transaction(async (tx) => {
+        // The receipt may have been booked again in the meantime; the expense then comes back without it
+        const receiptTaken = snap.receiptId
+          ? !!(await tx.expense.findUnique({ where: { receiptId: snap.receiptId }, select: { id: true } }))
+          : false;
+        await tx.expense.create({
+          data: {
+            id: entry.expenseId,
+            groupId: input.groupId,
+            title: snap.title,
+            description: snap.description,
+            amount: snap.amount,
+            currency: snap.currency,
+            exchangeRate: snap.exchangeRate,
+            baseCurrencyAmount: snap.baseCurrencyAmount,
+            category: snap.category,
+            placeName: snap.placeName,
+            isPrivate: snap.isPrivate,
+            latitude: snap.latitude,
+            longitude: snap.longitude,
+            expenseDate: new Date(snap.expenseDate),
+            splitMode: snap.splitMode,
+            paidById: snap.paidById,
+            addedById: snap.addedById,
+            receiptId: receiptTaken ? null : snap.receiptId,
+            createdAt: new Date(snap.createdAt),
+            shares: { create: snap.shares },
+          },
+        });
+        await tx.deletedExpense.delete({ where: { expenseId: entry.expenseId } });
+        await tx.activityLog.create({
+          data: {
+            groupId: input.groupId,
+            userId: ctx.user.id,
+            type: 'EXPENSE_CREATED',
+            entityId: entry.expenseId,
+            ...(snap.isPrivate
+              ? {}
+              : { metadata: { title: snap.title, amount: snap.amount, currency: snap.currency, restored: true } }),
           },
         });
       });

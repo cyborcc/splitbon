@@ -147,6 +147,13 @@
     "modelHint": "If the chosen model fails, the default chain takes over.",
     "startClaimRequest": "Demander à chacun de choisir ses articles",
     "startClaimRequestHint": "Tout le groupe reçoit une notification et choisit ses propres articles, en même temps.",
+    "assignModeTitle": "Comment voulez-vous répartir ce reçu ?",
+    "assignModeSelf": "Saisir moi-même",
+    "assignModeSelfHint": "Attribuez les articles directement ici, en dessous.",
+    "assignModeGroup": "Demander au groupe",
+    "claimRequestNeedsMembers": "Pas encore possible : le groupe doit compter au moins 2 membres.",
+    "claimRequestBlocked": "Pas possible pour l'instant : terminez d'abord la correction de l'IA.",
+    "claimRequestNoItems": "Impossible : ce reçu ne contient aucun article.",
     "claimRequestSending": "Envoi…",
     "claimRequestSent": "Demande envoyée à {count, plural, one {# personne} other {# personnes}}"
   },

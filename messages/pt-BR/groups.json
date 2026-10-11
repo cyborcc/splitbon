@@ -76,7 +76,8 @@
     "today": "Today",
     "yesterday": "Yesterday",
     "noneForFilter": "No expenses for this person.",
-    "history": "History"
+    "history": "History",
+    "trash": "Lixeira"
   },
   "settings": {
     "title": "Configurações do grupo",
@@ -288,5 +289,14 @@
     "copy": "Copiar",
     "copyFailed": "Não foi possível copiar",
     "markPaid": "Já paguei"
+  },
+  "trash": {
+    "title": "Lixeira",
+    "hint": "As despesas excluídas ficam aqui por 30 dias e podem ser restauradas. Depois são removidas de vez.",
+    "empty": "A lixeira está vazia.",
+    "restore": "Restaurar",
+    "restored": "Despesa restaurada.",
+    "deletedBy": "Excluída por {name} em {date}",
+    "daysLeft": "{count, plural, one {falta # dia} other {faltam # dias}}"
   }
 }

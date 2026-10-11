@@ -147,6 +147,13 @@
     "modelHint": "Scheitert das gewählte Modell, übernimmt die Standard-Kette.",
     "startClaimRequest": "Abfrage starten: jeder wählt seine Posten",
     "startClaimRequestHint": "Alle in der Gruppe werden benachrichtigt und wählen ihre eigenen Posten, auch gleichzeitig.",
+    "assignModeTitle": "Wie möchtest du diese Rechnung zuordnen?",
+    "assignModeSelf": "Selbst eintragen",
+    "assignModeSelfHint": "Die Posten direkt hier unten selbst zuordnen.",
+    "assignModeGroup": "Gruppe fragen",
+    "claimRequestNeedsMembers": "Noch nicht möglich: Die Gruppe braucht mindestens 2 Mitglieder.",
+    "claimRequestBlocked": "Gerade nicht möglich: Schließe zuerst die KI-Korrektur ab.",
+    "claimRequestNoItems": "Nicht möglich: Diese Rechnung hat keine Posten.",
     "claimRequestSending": "Wird gesendet…",
     "claimRequestSent": "Abfrage an {count, plural, one {# Person} other {# Personen}} gesendet"
   },

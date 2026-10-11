@@ -147,6 +147,13 @@
     "modelHint": "If the chosen model fails, the default chain takes over.",
     "startClaimRequest": "Be alla välja sina poster",
     "startClaimRequestHint": "Alla i gruppen får en avisering och väljer sina egna poster, samtidigt.",
+    "assignModeTitle": "Hur vill du fördela det här kvittot?",
+    "assignModeSelf": "Fyll i själv",
+    "assignModeSelfHint": "Fördela posterna direkt här nedanför.",
+    "assignModeGroup": "Fråga gruppen",
+    "claimRequestNeedsMembers": "Inte möjligt än: gruppen behöver minst 2 medlemmar.",
+    "claimRequestBlocked": "Inte möjligt just nu: slutför AI-korrigeringen först.",
+    "claimRequestNoItems": "Inte möjligt: kvittot har inga poster.",
     "claimRequestSending": "Skickar…",
     "claimRequestSent": "Förfrågan skickad till {count, plural, one {# person} other {# personer}}"
   },

@@ -147,6 +147,13 @@
     "modelHint": "If the chosen model fails, the default chain takes over.",
     "startClaimRequest": "Pedir que cada um escolha seus itens",
     "startClaimRequestHint": "Todos do grupo recebem uma notificação e escolhem os próprios itens, ao mesmo tempo.",
+    "assignModeTitle": "Como você quer atribuir este recibo?",
+    "assignModeSelf": "Preencher eu mesmo",
+    "assignModeSelfHint": "Atribua os itens diretamente aqui embaixo.",
+    "assignModeGroup": "Perguntar ao grupo",
+    "claimRequestNeedsMembers": "Ainda não é possível: o grupo precisa de pelo menos 2 membros.",
+    "claimRequestBlocked": "Não é possível agora: conclua primeiro a correção da IA.",
+    "claimRequestNoItems": "Não é possível: este recibo não tem itens.",
     "claimRequestSending": "Enviando…",
     "claimRequestSent": "Pedido enviado para {count, plural, one {# pessoa} other {# pessoas}}"
   },

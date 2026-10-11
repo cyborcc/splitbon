@@ -147,6 +147,13 @@
     "modelHint": "If the chosen model fails, the default chain takes over.",
     "startClaimRequest": "Ask everyone to pick their items",
     "startClaimRequestHint": "Everyone in the group gets a notification and picks their own items, all at the same time.",
+    "assignModeTitle": "How do you want to assign this receipt?",
+    "assignModeSelf": "Enter it myself",
+    "assignModeSelfHint": "Assign the items directly, right here, below.",
+    "assignModeGroup": "Ask the group",
+    "claimRequestNeedsMembers": "Not possible yet: the group needs at least 2 members.",
+    "claimRequestBlocked": "Not possible right now: finish the AI correction first.",
+    "claimRequestNoItems": "Not possible: this receipt has no items.",
     "claimRequestSending": "Sending…",
     "claimRequestSent": "Request sent to {count, plural, one {# person} other {# people}}"
   },

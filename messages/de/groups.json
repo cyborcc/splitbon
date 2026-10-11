@@ -76,7 +76,8 @@
     "today": "Heute",
     "yesterday": "Gestern",
     "noneForFilter": "Keine Ausgaben für diese Person.",
-    "history": "Verlauf"
+    "history": "Verlauf",
+    "trash": "Papierkorb"
   },
   "settings": {
     "title": "Gruppeneinstellungen",
@@ -288,5 +289,14 @@
     "copy": "Kopieren",
     "copyFailed": "Kopieren nicht möglich",
     "markPaid": "Ich habe bezahlt"
+  },
+  "trash": {
+    "title": "Papierkorb",
+    "hint": "Gelöschte Ausgaben bleiben 30 Tage hier und können wiederhergestellt werden. Danach werden sie endgültig entfernt.",
+    "empty": "Der Papierkorb ist leer.",
+    "restore": "Wiederherstellen",
+    "restored": "Ausgabe wiederhergestellt.",
+    "deletedBy": "Gelöscht von {name} am {date}",
+    "daysLeft": "{count, plural, one {# Tag übrig} other {# Tage übrig}}"
   }
 }

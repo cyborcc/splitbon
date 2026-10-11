@@ -76,7 +76,8 @@
     "today": "Today",
     "yesterday": "Yesterday",
     "noneForFilter": "No expenses for this person.",
-    "history": "History"
+    "history": "History",
+    "trash": "Papelera"
   },
   "settings": {
     "title": "Configuración del grupo",
@@ -288,5 +289,14 @@
     "copy": "Copiar",
     "copyFailed": "No se pudo copiar",
     "markPaid": "Ya pagué"
+  },
+  "trash": {
+    "title": "Papelera",
+    "hint": "Los gastos eliminados permanecen aquí 30 días y se pueden restaurar. Después se borran definitivamente.",
+    "empty": "La papelera está vacía.",
+    "restore": "Restaurar",
+    "restored": "Gasto restaurado.",
+    "deletedBy": "Eliminado por {name} el {date}",
+    "daysLeft": "{count, plural, one {queda # día} other {quedan # días}}"
   }
 }
