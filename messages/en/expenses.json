@@ -268,6 +268,13 @@
     "shareHint": "Includes your part of tax and tip. The amount is final once the receipt is booked.",
     "bookHint": "Everyone done?",
     "bookLink": "Book the receipt",
-    "notFound": "This receipt can't be found."
+    "notFound": "This receipt can't be found.",
+    "allPickedBanner": "Every item is picked 🎉 The receipt can be booked.",
+    "onlyOpen": "Show only open items",
+    "showAll": "Show all",
+    "doneLabel": "Done:",
+    "waitingLabel": "Still picking:",
+    "openBadge": "open",
+    "finishedToast": "Thanks! Your picks are saved."
   }
 }

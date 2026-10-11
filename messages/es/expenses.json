@@ -268,6 +268,13 @@
     "shareHint": "Incluye tu parte de impuestos y propina. El importe es definitivo cuando se registra el ticket.",
     "bookHint": "¿Todos listos?",
     "bookLink": "Registrar el ticket",
-    "notFound": "No se encuentra este ticket."
+    "notFound": "No se encuentra este ticket.",
+    "allPickedBanner": "Todos los artículos están elegidos 🎉 Ya se puede registrar el ticket.",
+    "onlyOpen": "Mostrar solo los pendientes",
+    "showAll": "Mostrar todos",
+    "doneLabel": "Listos:",
+    "waitingLabel": "Aún eligiendo:",
+    "openBadge": "pendiente",
+    "finishedToast": "¡Gracias! Tu selección está guardada."
   }
 }

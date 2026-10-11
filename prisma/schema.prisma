@@ -235,8 +235,12 @@ model Receipt {
   // "Everyone picks their own lines": when it was asked for, and by whom
   claimRequestedAt   DateTime?
   claimRequestedById String?
+  // Sent once each: "every line has someone" and "everyone is done but lines are left"
+  claimsCompleteNotifiedAt DateTime?
+  claimsOpenNotifiedAt     DateTime?
 
   items   ReceiptItem[]
+  claimsDone ReceiptClaimDone[]
   expense Expense?
   group   Group?  @relation(fields: [groupId], references: [id], onDelete: SetNull)
   uploadedBy    User?         @relation("UploadedReceipts", fields: [uploadedById], references: [id], onDelete: SetNull)
@@ -287,6 +291,18 @@ model ReceiptItemClaim {
 
   @@unique([receiptItemId, userId])
   @@index([userId])
+}
+
+// A group member saying "I picked all my lines" for a receipt the group picks together.
+model ReceiptClaimDone {
+  id        String   @id @default(cuid())
+  receiptId String
+  userId    String
+  createdAt DateTime @default(now())
+
+  receipt Receipt @relation(fields: [receiptId], references: [id], onDelete: Cascade)
+
+  @@unique([receiptId, userId])
 }
 
 enum ReceiptStatus {

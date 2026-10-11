@@ -268,6 +268,13 @@
     "shareHint": "세금과 팁의 내 몫이 포함됩니다. 영수증이 등록되면 금액이 확정됩니다.",
     "bookHint": "모두 끝났나요?",
     "bookLink": "영수증 등록",
-    "notFound": "영수증을 찾을 수 없습니다."
+    "notFound": "영수증을 찾을 수 없습니다.",
+    "allPickedBanner": "모든 품목이 선택되었습니다 🎉 영수증을 등록할 수 있습니다.",
+    "onlyOpen": "남은 품목만 보기",
+    "showAll": "전체 보기",
+    "doneLabel": "완료:",
+    "waitingLabel": "선택 중:",
+    "openBadge": "미선택",
+    "finishedToast": "감사합니다! 선택이 저장되었습니다."
   }
 }

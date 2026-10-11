@@ -8,7 +8,14 @@ import { logger } from './logger';
  * What happened. Only these reach a person: an expense they are in, a changed price, a changed split
  * (their own share), a payment to them, a request to pick their own lines of a scanned receipt.
  */
-export type NotifyKind = 'EXPENSE_ADDED' | 'PRICE_CHANGED' | 'SHARE_CHANGED' | 'SETTLEMENT' | 'CLAIM_REQUEST';
+export type NotifyKind =
+  | 'EXPENSE_ADDED'
+  | 'PRICE_CHANGED'
+  | 'SHARE_CHANGED'
+  | 'SETTLEMENT'
+  | 'CLAIM_REQUEST'
+  | 'CLAIMS_COMPLETE'
+  | 'CLAIMS_OPEN';
 
 export type NotifyItem = {
   userId: string;
@@ -16,7 +23,7 @@ export type NotifyItem = {
   groupId: string;
   /** Expense id (settlement id, receipt id for CLAIM_REQUEST): where the notification leads */
   entityId: string;
-  vars: { actor: string; title?: string; amount?: string; share?: string; from?: string; to?: string };
+  vars: { actor: string; title?: string; amount?: string; share?: string; from?: string; to?: string; count?: number };
 };
 
 const TEXTS: Record<'de' | 'en', Record<NotifyKind, (v: NotifyItem['vars']) => { title: string; body: string }>> = {
@@ -38,6 +45,14 @@ const TEXTS: Record<'de' | 'en', Record<NotifyKind, (v: NotifyItem['vars']) => {
       title: `${v.actor} bittet dich, deine Posten zu wählen`,
       body: `„${v.title}“ · tippe, um auszuwählen`,
     }),
+    CLAIMS_COMPLETE: (v) => ({
+      title: `Alle Posten von „${v.title}“ sind verteilt 🎉`,
+      body: 'Der Beleg kann jetzt gebucht werden.',
+    }),
+    CLAIMS_OPEN: (v) => ({
+      title: `Bei „${v.title}“ ist noch etwas offen`,
+      body: `${v.count} Posten hat noch niemand gewählt. Tippe, um nachzusehen.`,
+    }),
   },
   en: {
     EXPENSE_ADDED: (v) => ({
@@ -56,6 +71,14 @@ const TEXTS: Record<'de' | 'en', Record<NotifyKind, (v: NotifyItem['vars']) => {
     CLAIM_REQUEST: (v) => ({
       title: `${v.actor} asks you to pick your items`,
       body: `“${v.title}” · tap to choose`,
+    }),
+    CLAIMS_COMPLETE: (v) => ({
+      title: `All items of “${v.title}” are picked 🎉`,
+      body: 'The receipt can be booked now.',
+    }),
+    CLAIMS_OPEN: (v) => ({
+      title: `Something is still open on “${v.title}”`,
+      body: `${v.count} ${v.count === 1 ? 'item' : 'items'} nobody picked yet. Tap to check.`,
     }),
   },
 };

@@ -268,6 +268,13 @@
     "shareHint": "包含你应分摊的税费和小费。小票记账后金额才最终确定。",
     "bookHint": "大家都选好了吗？",
     "bookLink": "记账",
-    "notFound": "找不到此小票。"
+    "notFound": "找不到此小票。",
+    "allPickedBanner": "所有项目都已选择 🎉 可以记账了。",
+    "onlyOpen": "只显示未选项目",
+    "showAll": "显示全部",
+    "doneLabel": "已完成：",
+    "waitingLabel": "仍在选择：",
+    "openBadge": "未选",
+    "finishedToast": "谢谢！你的选择已保存。"
   }
 }

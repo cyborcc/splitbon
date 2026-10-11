@@ -1,11 +1,11 @@
 'use client';
 
-import { use } from 'react';
+import { use, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useSession } from 'next-auth/react';
 import { ArrowLeft, Check } from 'lucide-react';
 import { toast } from 'sonner';
-import { Link } from '@/i18n/navigation';
+import { Link, useRouter } from '@/i18n/navigation';
 import { trpc } from '@/lib/trpc';
 import { formatCents } from '@/lib/money';
 import { claimShare } from '@/lib/receipt-claims';
@@ -26,6 +26,8 @@ export default function ClaimReceiptPage({ params }: { params: Promise<{ groupId
   const { data: authSession } = useSession();
   const myId = authSession?.user?.id;
   const utils = trpc.useUtils();
+  const router = useRouter();
+  const [onlyOpen, setOnlyOpen] = useState(false);
 
   const group = trpc.groups.get.useQuery({ groupId });
   const receiptData = trpc.receipts.getReceiptItems.useQuery({ receiptId });
@@ -49,6 +51,14 @@ export default function ClaimReceiptPage({ params }: { params: Promise<{ groupId
       toast.error(err.message);
     },
     onSettled: () => utils.receipts.getClaims.invalidate({ receiptId }),
+  });
+
+  const finish = trpc.receipts.finishClaims.useMutation({
+    onSuccess: () => {
+      toast.success(t('finishedToast'));
+      router.push(`/groups/${groupId}`);
+    },
+    onError: (err) => toast.error(err.message),
   });
 
   if (receiptData.isLoading || claims.isLoading || group.isLoading) return <LoadingSpinner />;
@@ -87,6 +97,9 @@ export default function ClaimReceiptPage({ params }: { params: Promise<{ groupId
     : 0;
   const merchant = extracted.merchantName?.trim() || t('receipt');
   const requester = claims.data.requestedBy?.name;
+  const iAmDone = !!myId && claims.data.done.includes(myId);
+  const shown = onlyOpen ? items.filter((i) => !byItem.get(i.id)?.length) : items;
+  const nameOf = (id: string) => members.get(id)?.name ?? '?';
 
   return (
     <div className="mx-auto max-w-2xl space-y-4 pb-28">
@@ -121,8 +134,43 @@ export default function ClaimReceiptPage({ params }: { params: Promise<{ groupId
         </Card>
       )}
 
+      {/* Live state: what is still open, who is done */}
+      <Card className={unclaimed === 0 ? 'border-primary bg-primary/5' : ''} data-testid="claim-progress">
+        <CardContent className="space-y-2 py-3 text-sm">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="font-medium" data-testid="claim-open-count">
+              {unclaimed > 0 ? t('unclaimed', { count: unclaimed }) : t('allPickedBanner')}
+            </span>
+            {unclaimed > 0 && (
+              <button
+                type="button"
+                onClick={() => setOnlyOpen((v) => !v)}
+                className="text-xs text-primary hover:underline"
+                data-testid="claim-only-open"
+              >
+                {onlyOpen ? t('showAll') : t('onlyOpen')}
+              </button>
+            )}
+          </div>
+          {(claims.data.done.length > 0 || claims.data.waiting.length > 0) && (
+            <div className="space-y-1 text-xs text-muted-foreground">
+              {claims.data.done.length > 0 && (
+                <p>
+                  ✅ {t('doneLabel')} {claims.data.done.map(nameOf).join(', ')}
+                </p>
+              )}
+              {claims.data.waiting.length > 0 && (
+                <p>
+                  ⏳ {t('waitingLabel')} {claims.data.waiting.map(nameOf).join(', ')}
+                </p>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       <div className="space-y-2" data-testid="claim-items">
-        {items.map((item) => {
+        {shown.map((item) => {
           const claimers = byItem.get(item.id) ?? [];
           const mine = !!myId && claimers.includes(myId);
           return (
@@ -135,6 +183,7 @@ export default function ClaimReceiptPage({ params }: { params: Promise<{ groupId
               className={cn(
                 'flex w-full items-center gap-3 rounded-xl border p-3 text-left transition-colors',
                 mine ? 'border-primary bg-primary/10' : 'hover:bg-muted/60',
+                !mine && claimers.length === 0 && 'border-dashed border-amber-500/60',
                 booked && 'opacity-70',
               )}
               data-testid={`claim-item-${item.id}`}
@@ -166,6 +215,9 @@ export default function ClaimReceiptPage({ params }: { params: Promise<{ groupId
                       />
                     );
                   })}
+                  {claimers.length === 0 && (
+                    <span className="text-xs font-medium text-amber-600 dark:text-amber-400">{t('openBadge')}</span>
+                  )}
                   {claimers.length > 1 && (
                     <span className="text-xs text-muted-foreground">{t('sharedBy', { count: claimers.length })}</span>
                   )}
@@ -187,8 +239,12 @@ export default function ClaimReceiptPage({ params }: { params: Promise<{ groupId
               {unclaimed > 0 ? t('unclaimed', { count: unclaimed }) : t('allClaimed')}
             </p>
           </div>
-          <Button nativeButton={false} render={<Link href={`/groups/${groupId}`} />} data-testid="claim-done">
-            {t('done')}
+          <Button
+            disabled={booked || finish.isPending}
+            onClick={() => (iAmDone ? router.push(`/groups/${groupId}`) : finish.mutate({ receiptId }))}
+            data-testid="claim-done"
+          >
+            {iAmDone ? t('backToGroup') : t('done')}
           </Button>
         </div>
       </div>

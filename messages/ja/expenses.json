@@ -268,6 +268,13 @@
     "shareHint": "税金とチップの負担分を含みます。金額はレシート登録時に確定します。",
     "bookHint": "全員終わりましたか？",
     "bookLink": "レシートを登録",
-    "notFound": "レシートが見つかりません。"
+    "notFound": "レシートが見つかりません。",
+    "allPickedBanner": "すべての品目が選ばれました 🎉 レシートを登録できます。",
+    "onlyOpen": "未選択のみ表示",
+    "showAll": "すべて表示",
+    "doneLabel": "完了：",
+    "waitingLabel": "選択中：",
+    "openBadge": "未選択",
+    "finishedToast": "ありがとう！選択を保存しました。"
   }
 }

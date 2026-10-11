@@ -18,6 +18,8 @@ const ICONS: Record<string, string> = {
   SHARE_CHANGED: '🔀',
   SETTLEMENT: '🤝',
   CLAIM_REQUEST: '🙋',
+  CLAIMS_COMPLETE: '🎉',
+  CLAIMS_OPEN: '⏳',
 };
 
 function keyToBytes(base64: string): Uint8Array<ArrayBuffer> {

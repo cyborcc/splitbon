@@ -66,6 +66,74 @@ async function logReceiptChange(
   });
 }
 
+/** Members who can pick: real accounts, not placeholders (they never open the app). */
+async function realMemberIds(db: PrismaClient, memberIds: string[]): Promise<string[]> {
+  const users = await db.user.findMany({
+    where: { id: { in: memberIds }, isPlaceholder: false },
+    select: { id: true },
+  });
+  return users.map((u) => u.id);
+}
+
+/**
+ * After a pick or someone finishing: tells everyone once when every line has someone ("ready to book"),
+ * or once when everyone is done but lines are left. Each message goes out only once per request; the
+ * marker is set with a conditional update, so two people finishing at the same moment send one message.
+ */
+async function checkClaimProgress(db: PrismaClient, receiptId: string, actorId: string) {
+  const receipt = await db.receipt.findUnique({
+    where: { id: receiptId },
+    select: {
+      id: true,
+      groupId: true,
+      originalName: true,
+      extractedData: true,
+      claimRequestedAt: true,
+      group: { select: { members: { select: { userId: true } } } },
+      items: { select: { id: true, claims: { select: { userId: true }, take: 1 } } },
+      claimsDone: { select: { userId: true } },
+    },
+  });
+  if (!receipt?.groupId || !receipt.group || !receipt.claimRequestedAt || receipt.items.length === 0) return;
+  const open = receipt.items.filter((i) => i.claims.length === 0).length;
+  const members = await realMemberIds(
+    db,
+    receipt.group.members.map((m) => m.userId),
+  );
+  const done = new Set(receipt.claimsDone.map((d) => d.userId));
+  const title =
+    (receipt.extractedData ? parseExtractedData(receipt.extractedData)?.merchantName?.trim() : '') ||
+    receipt.originalName;
+
+  let kind: 'CLAIMS_COMPLETE' | 'CLAIMS_OPEN' | null = null;
+  if (open === 0) {
+    const marked = await db.receipt.updateMany({
+      where: { id: receipt.id, claimsCompleteNotifiedAt: null },
+      data: { claimsCompleteNotifiedAt: new Date() },
+    });
+    if (marked.count === 1) kind = 'CLAIMS_COMPLETE';
+  } else if (members.length > 0 && members.every((id) => done.has(id))) {
+    const marked = await db.receipt.updateMany({
+      where: { id: receipt.id, claimsOpenNotifiedAt: null },
+      data: { claimsOpenNotifiedAt: new Date() },
+    });
+    if (marked.count === 1) kind = 'CLAIMS_OPEN';
+  }
+  if (!kind) return;
+  await sendNotifications(
+    db,
+    members
+      .filter((id) => id !== actorId)
+      .map((userId) => ({
+        userId,
+        kind: kind!,
+        groupId: receipt.groupId!,
+        entityId: receipt.id,
+        vars: { actor: '', title, count: open },
+      })),
+  );
+}
+
 type Units = Record<string, number>; // userId -> units of a line
 
 function sameUnits(a: Units, b: Units): boolean {
@@ -1173,11 +1241,15 @@ export const receiptsRouter = createTRPCRouter({
       });
     }
 
+    await ctx.db.receiptClaimDone.deleteMany({ where: { receiptId: receipt.id } });
     await ctx.db.receipt.update({
       where: { id: receipt.id },
       data: {
         claimRequestedAt: new Date(),
         claimRequestedById: ctx.user.id,
+        // A new request starts the "everyone done" round again
+        claimsCompleteNotifiedAt: null,
+        claimsOpenNotifiedAt: null,
         savedById: receipt.savedById ?? ctx.user.id,
       },
     });
@@ -1204,7 +1276,7 @@ export const receiptsRouter = createTRPCRouter({
   /** Who picked which line so far, and whether picking was asked for. */
   getClaims: protectedProcedure.input(z.object({ receiptId: z.string() })).query(async ({ ctx, input }) => {
     const receipt = await verifyReceiptAccess(ctx.db, input.receiptId, ctx.user.id);
-    const [claims, expense, requestedBy] = await Promise.all([
+    const [claims, expense, requestedBy, done, members] = await Promise.all([
       ctx.db.receiptItemClaim.findMany({
         where: { receiptItem: { receiptId: receipt.id } },
         select: { receiptItemId: true, userId: true },
@@ -1214,12 +1286,23 @@ export const receiptsRouter = createTRPCRouter({
       receipt.claimRequestedById
         ? ctx.db.user.findUnique({ where: { id: receipt.claimRequestedById }, select: { id: true, name: true } })
         : null,
+      ctx.db.receiptClaimDone.findMany({ where: { receiptId: receipt.id }, select: { userId: true } }),
+      receipt.group
+        ? realMemberIds(
+            ctx.db,
+            receipt.group.members.map((m: { userId: string }) => m.userId),
+          )
+        : Promise.resolve([] as string[]),
     ]);
+    const doneIds = new Set(done.map((d) => d.userId));
     return {
       requestedAt: receipt.claimRequestedAt,
       requestedBy,
       expenseId: expense?.id ?? null,
       claims,
+      /** Members who said they picked everything, and those still picking */
+      done: members.filter((id) => doneIds.has(id)),
+      waiting: members.filter((id) => !doneIds.has(id)),
     };
   }),
 
@@ -1249,8 +1332,21 @@ export const receiptsRouter = createTRPCRouter({
       } else {
         await ctx.db.receiptItemClaim.deleteMany({ where: { receiptItemId: item.id, userId: ctx.user.id } });
       }
+      if (input.claimed) await checkClaimProgress(ctx.db, receipt.id, ctx.user.id);
       return { claimed: input.claimed };
     }),
+
+  /** The signed-in person has picked all their lines. When everyone has, the group hears what is left. */
+  finishClaims: protectedProcedure.input(z.object({ receiptId: z.string() })).mutation(async ({ ctx, input }) => {
+    const receipt = await verifyReceiptAccess(ctx.db, input.receiptId, ctx.user.id);
+    if (!receipt.groupId) throw new TRPCError({ code: 'BAD_REQUEST', message: 'Only a receipt of a group' });
+    await ctx.db.receiptClaimDone.createMany({
+      data: [{ receiptId: receipt.id, userId: ctx.user.id }],
+      skipDuplicates: true,
+    });
+    await checkClaimProgress(ctx.db, receipt.id, ctx.user.id);
+    return { done: true };
+  }),
 
   listPending: groupMemberProcedure.input(z.object({ groupId: z.string() })).query(async ({ ctx, input }) => {
     const receipts = await ctx.db.receipt.findMany({

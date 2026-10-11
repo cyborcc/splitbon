@@ -268,6 +268,13 @@
     "shareHint": "Inklusive deinem Teil an Steuer und Trinkgeld. Der Betrag steht fest, sobald der Beleg gebucht ist.",
     "bookHint": "Alle fertig?",
     "bookLink": "Beleg buchen",
-    "notFound": "Dieser Beleg wurde nicht gefunden."
+    "notFound": "Dieser Beleg wurde nicht gefunden.",
+    "allPickedBanner": "Alle Posten sind verteilt 🎉 Der Beleg kann gebucht werden.",
+    "onlyOpen": "Nur offene zeigen",
+    "showAll": "Alle zeigen",
+    "doneLabel": "Fertig:",
+    "waitingLabel": "Wählt noch:",
+    "openBadge": "offen",
+    "finishedToast": "Danke! Deine Auswahl ist gespeichert."
   }
 }

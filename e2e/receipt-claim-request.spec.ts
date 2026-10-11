@@ -1,8 +1,9 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
-import { users, login, authedContext, createTestGroup, trpcMutation, trpcQuery, trpcResult } from './helpers';
+import { users, login, createTestGroup, trpcMutation, trpcQuery, trpcResult } from './helpers';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function mutationResult(res: { json: () => Promise<any> }) {
   const body = await res.json();
   const entry = Array.isArray(body) ? body[0] : body;
@@ -55,6 +56,11 @@ test('everyone picks their own lines, the organizer applies the picks', async ({
     const claims = await trpcResult(await trpcQuery(owner, 'receipts.getClaims', { receiptId }));
     expect(claims.claims).toHaveLength(3);
 
+    // Bob says he is done; the page lists him as done
+    await mutationResult(await trpcMutation(bob, 'receipts.finishClaims', { receiptId }));
+    const afterFinish = await trpcResult(await trpcQuery(owner, 'receipts.getClaims', { receiptId }));
+    expect(afterFinish.done).toContain(memberIds[users.bob.email]);
+
     // Alice's picking page shows her pick, shared with Bob
     await login(page, users.alice.email, users.alice.password);
     await page.goto(`/en/groups/${groupId}/receipts/${receiptId}/claim`);
@@ -62,6 +68,7 @@ test('everyone picks their own lines, the organizer applies the picks', async ({
     await expect(first).toHaveAttribute('aria-pressed', 'true');
     await expect(first).toContainText('shared by 2');
     await expect(page.getByTestId('claim-my-share')).toContainText(/\d/);
+    await expect(page.getByTestId('claim-progress')).toContainText('Done:');
 
     // Tapping a line picks it for Alice
     const second = page.getByTestId(`claim-item-${items[1].id}`);
@@ -73,7 +80,6 @@ test('everyone picks their own lines, the organizer applies the picks', async ({
     await expect(page.getByTestId('claim-status')).toBeVisible({ timeout: 30_000 });
     await page.getByTestId('apply-claims-btn').click();
     await expect(page.getByText("The group's picks were applied")).toBeVisible();
-    expect(memberIds[users.bob.email]).toBeTruthy();
   } finally {
     await dispose();
   }
