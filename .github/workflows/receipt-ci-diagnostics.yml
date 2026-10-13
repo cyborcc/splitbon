@@ -1,0 +1,38 @@
+name: Receipt CI Diagnostics
+
+on:
+  push:
+    branches: [fix/receipt-ci]
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 3
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --legacy-peer-deps
+      - run: npx prisma generate
+      - name: Diagnose formatting and types
+        shell: bash
+        run: |
+          git diff-tree --no-commit-id --name-only -r fae12a5 -- '*.ts' '*.tsx' > "$RUNNER_TEMP/receipt-files"
+          while IFS= read -r file; do npx prettier --write "$file"; done < "$RUNNER_TEMP/receipt-files"
+          python3 - <<'PY'
+          import base64, subprocess
+          patch = subprocess.check_output(['git', 'diff', '--', '*.ts', '*.tsx'])
+          encoded = base64.b64encode(patch).decode()
+          chunks = [encoded[i:i+12000] for i in range(0, len(encoded), 12000)]
+          for i, chunk in enumerate(chunks):
+              print(f'::notice title=Receipt format patch {i+1}/{len(chunks)}::{chunk}')
+          result = subprocess.run(['npx', 'tsc', '--noEmit', '--pretty', 'false'], capture_output=True, text=True)
+          text = (result.stdout + result.stderr).replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+          print(f'::notice title=Receipt typecheck exit {result.returncode}::{text}')
+          PY
