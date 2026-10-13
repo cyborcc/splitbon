@@ -33,6 +33,7 @@ function fixture(
     id: receiptId,
     uploadedById: 'alice',
     savedById: null,
+    paidById: null as string | null,
     status: 'COMPLETED',
     originalName: 'bon.jpg',
     groupId: opts.groupId === undefined ? 'group' : opts.groupId,

@@ -43,7 +43,9 @@ test('everyone picks their own lines and the organizer gets them automatically',
     await page.locator('#title').fill('Breakfast by the Nile');
     await page.locator('#location').fill('Terrace');
     await page.getByTestId('receipt-date-input').fill('2026-10-12');
-    await page.getByTestId('paid-by-select').selectOption(memberIds[users.bob.email]);
+    const bobId = memberIds[users.bob.email];
+    if (!bobId) throw new Error('Test group is missing Bob');
+    await page.getByTestId('paid-by-select').selectOption(bobId);
     await page.getByTestId('tip-input').fill('2.50');
     await page.getByTestId('paid-total-input').fill('100.00');
     await page.getByTestId('start-claim-request-btn').click();
@@ -116,7 +118,7 @@ test('everyone picks their own lines and the organizer gets them automatically',
     await expect(page.locator('#title')).toHaveValue('Breakfast by the Nile');
     await expect(page.locator('#location')).toHaveValue('Terrace');
     await expect(page.getByTestId('receipt-date-input')).toHaveValue('2026-10-12');
-    await expect(page.getByTestId('paid-by-select')).toHaveValue(memberIds[users.bob.email]);
+    await expect(page.getByTestId('paid-by-select')).toHaveValue(bobId);
     await expect(page.getByTestId('paid-total-input')).toHaveValue('100.00');
     await expect(page.getByTestId('claim-status')).toBeVisible({ timeout: 30_000 });
     await expect(page.getByTestId('claims-auto-applied')).toContainText("The group's picks are applied automatically");
