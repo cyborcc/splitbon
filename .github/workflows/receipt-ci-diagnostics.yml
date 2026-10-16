@@ -21,6 +21,7 @@ jobs:
       - run: npm ci --legacy-peer-deps
       - run: npx prisma generate
       - name: Diagnose formatting and types
+        # Fixed repository paths only; no event payload or user-controlled shell interpolation.
         shell: bash
         run: |
           git diff-tree --no-commit-id --name-only -r fae12a5 -- '*.ts' '*.tsx' > "$RUNNER_TEMP/receipt-files"
@@ -34,5 +35,10 @@ jobs:
               print(f'::notice title=Receipt format patch {i+1}/{len(chunks)}::{chunk}')
           result = subprocess.run(['npx', 'tsc', '--noEmit', '--pretty', 'false'], capture_output=True, text=True)
           text = (result.stdout + result.stderr).replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
-          print(f'::notice title=Receipt typecheck exit {result.returncode}::{text}')
+          print(f'::notice title=Receipt typecheck exit {result.returncode}::{text or "No TypeScript diagnostics."}')
+          raise SystemExit(result.returncode)
           PY
+      - name: Verify TypeScript
+        run: npx tsc --noEmit --pretty false
+      - name: Verify unit tests
+        run: npm test -- --maxWorkers=1
