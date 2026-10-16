@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import { users, login, createTestGroup, trpcMutation, trpcQuery, trpcResult } from './helpers';
+import { openUnits } from '../src/lib/receipt-claims';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function mutationResult(res: { json: () => Promise<any> }) {
@@ -113,7 +114,20 @@ test('everyone picks their own lines and the organizer gets them automatically',
       expect(onTacos.map((c: { units: number }) => c.units).sort()).toEqual([1, 2]);
     }
 
-    // On the receipt, the picks become assignments without a second Apply action.
+    // Cover all remaining units, not just one pick per line. Only then auto-apply is safe.
+    const beforeApply = await trpcResult(await trpcQuery(owner, 'receipts.getClaims', { receiptId }));
+    const currentClaims = beforeApply.claims as { receiptItemId: string; userId: string; units: number }[];
+    for (const item of items as { id: string; quantity: number }[]) {
+      const onLine = currentClaims.filter((claim) => claim.receiptItemId === item.id);
+      const missing = openUnits(item.quantity, onLine);
+      if (missing === 0) continue;
+      const mine = onLine.find((claim) => claim.userId === memberIds[users.alice.email])?.units ?? 0;
+      await mutationResult(
+        await trpcMutation(owner, 'receipts.setClaim', { receiptItemId: item.id, units: mine + missing }),
+      );
+    }
+
+    // On the receipt, complete picks become assignments without a second Apply action.
     await page.goto(`/en/groups/${groupId}/scan?receiptId=${receiptId}`);
     await expect(page.locator('#title')).toHaveValue('Breakfast by the Nile');
     await expect(page.locator('#location')).toHaveValue('Terrace');

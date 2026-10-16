@@ -46,6 +46,29 @@ export function claimShare(args: {
   return Math.round(lines + extra);
 }
 
+/** Only complete, current group picks may replace the editor automatically. */
+export function completedClaimAssignments(args: {
+  items: { id: string; quantity: number }[];
+  claims: Claim[];
+  memberIds: Set<string>;
+  manuallyAdjusted: boolean;
+  editingExpense: boolean;
+}): ReturnType<typeof claimsToAssignments> | null {
+  if (args.manuallyAdjusted || args.editingExpense || args.items.length === 0) return null;
+  const itemIds = new Set(args.items.map((item) => item.id));
+  const current = args.claims.filter(
+    (claim) => args.memberIds.has(claim.userId) && itemIds.has(claim.receiptItemId),
+  );
+  if (
+    args.items.some(
+      (item) => openUnits(item.quantity, current.filter((claim) => claim.receiptItemId === item.id)) > 0,
+    )
+  ) {
+    return null;
+  }
+  return claimsToAssignments(current, args.memberIds);
+}
+
 /** The picks as assignments (line -> people) and units (line -> person -> units above 1). */
 export function claimsToAssignments(
   claims: Claim[],

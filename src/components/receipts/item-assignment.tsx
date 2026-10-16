@@ -30,7 +30,7 @@ import { toast } from 'sonner';
 import { useOrderedCurrencies } from '@/lib/use-ordered-currencies';
 import { ReceiptRatePreview } from './receipt-rate-preview';
 import { ReceiptHistory, scrollToItem } from './receipt-history';
-import { claimShare, claimsToAssignments, openUnits } from '@/lib/receipt-claims';
+import { claimShare, completedClaimAssignments, openUnits } from '@/lib/receipt-claims';
 import { Link } from '@/i18n/navigation';
 import { normalizeDate } from '@/server/lib/normalize-date';
 
@@ -113,6 +113,7 @@ export function ItemAssignment({
   // leave that deliberate correction alone instead of replacing it during the next poll.
   const claimsManuallyAdjustedRef = useRef(false);
   const [claimsManuallyAdjusted, setClaimsManuallyAdjusted] = useState(false);
+  const [claimsAutoApplied, setClaimsAutoApplied] = useState(false);
   const autoClaimItemIdsRef = useRef<Set<string>>(new Set());
   const autoAppliedClaimsRef = useRef<string | null>(null);
   const countOf = (itemId: string, userId: string) => counts[itemId]?.[userId] ?? 1;
@@ -346,19 +347,32 @@ export function ItemAssignment({
     }
   }, [receiptData.data, initial, currentUserId, members]);
 
-  // A booking request should not require a second, easy-to-miss "Apply" action. Mirror the
-  // members' current picks into the editor until the creator starts adjusting the split by hand.
+  // Apply only once every unit is covered. Incomplete polls and manual corrections must not
+  // silently replace the creator's split; completion is inferred from coverage, not headcount.
   useEffect(() => {
-    if (expenseId || !claims.data || claimsManuallyAdjustedRef.current) return;
-    const signature = JSON.stringify(
-      claims.data.claims
-        .map((claim) => [claim.receiptItemId, claim.userId, claim.units ?? 1])
-        .sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b))),
-    );
+    if (!claims.data || !receiptData.data) return;
+    const picked = completedClaimAssignments({
+      items: receiptData.data.items,
+      claims: claims.data.claims,
+      memberIds: new Set(members.map((member) => member.id)),
+      manuallyAdjusted: claimsManuallyAdjustedRef.current,
+      editingExpense: !!expenseId,
+    });
+    if (!picked) {
+      setClaimsAutoApplied(false);
+      autoAppliedClaimsRef.current = null;
+      return;
+    }
+    const signature = JSON.stringify([
+      Object.entries(picked.assignments)
+        .map(([id, users]) => [id, [...users].sort()])
+        .sort(),
+      picked.counts,
+    ]);
     if (autoAppliedClaimsRef.current === signature) return;
     autoAppliedClaimsRef.current = signature;
+    setClaimsAutoApplied(true);
 
-    const picked = claimsToAssignments(claims.data.claims, new Set(members.map((member) => member.id)));
     const previousItemIds = autoClaimItemIdsRef.current;
     autoClaimItemIdsRef.current = new Set(Object.keys(picked.assignments));
     setAssignments((previous) => {
@@ -371,7 +385,7 @@ export function ItemAssignment({
       for (const itemId of previousItemIds) delete next[itemId];
       return { ...next, ...picked.counts };
     });
-  }, [claims.data, expenseId, members]);
+  }, [claims.data, receiptData.data, expenseId, members]);
 
   // On a wide screen the receipt opens next to the recognized values; a link to a line
   // (#item-…, e.g. from the history) scrolls to it once the lines are there.
@@ -1132,7 +1146,7 @@ export function ItemAssignment({
                     })}
               </p>
               <div className="flex flex-wrap items-center gap-2">
-                {claims.data.claims.length > 0 && (
+                {claimsAutoApplied && !claimsManuallyAdjusted && (
                   <span
                     className="inline-flex items-center gap-1.5 text-xs text-muted-foreground"
                     data-testid="claims-auto-applied"

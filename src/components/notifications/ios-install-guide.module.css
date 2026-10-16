@@ -1,0 +1,79 @@
+.steps {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  min-width: 0;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+}
+
+.phone {
+  position: relative;
+  width: 5rem;
+  height: 7rem;
+  margin: 0 auto 0.75rem;
+  color: var(--primary);
+}
+
+.frame {
+  width: 100%;
+  height: 100%;
+  stroke-width: 1;
+}
+
+.action {
+  position: absolute;
+  left: 1.6rem;
+  top: 2.5rem;
+  width: 1.8rem;
+  height: 1.8rem;
+}
+
+.number {
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+/* One sequence shorter than five seconds; reopening replays it. */
+@media (prefers-reduced-motion: no-preference) {
+  .guide[open] .step {
+    animation: install-step 0.8s ease-out;
+  }
+
+  .guide[open] .step:nth-child(2) {
+    animation-delay: 0.8s;
+  }
+
+  .guide[open] .step:nth-child(3) {
+    animation-delay: 1.6s;
+  }
+
+  .guide[open] .step:nth-child(4) {
+    animation-delay: 2.4s;
+  }
+}
+
+@keyframes install-step {
+  40% {
+    border-color: var(--primary);
+    background: var(--accent);
+    transform: translateY(-3px);
+  }
+}

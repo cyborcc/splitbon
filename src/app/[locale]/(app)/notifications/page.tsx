@@ -11,6 +11,7 @@ import { Link, useRouter } from '@/i18n/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { IosInstallGuide } from '@/components/notifications/ios-install-guide';
 
 const ICONS: Record<string, string> = {
   EXPENSE_ADDED: '🧾',
@@ -152,6 +153,10 @@ export default function NotificationsPage() {
                 <li>{t('pushIosStep3')}</li>
                 <li>{t('pushIosStep4')}</li>
               </ol>
+              <IosInstallGuide
+                title={t('pushIosGuide')}
+                steps={[t('pushIosStep1'), t('pushIosStep2'), t('pushIosStep3'), t('pushIosStep4')]}
+              />
               <a
                 href="https://support.apple.com/guide/iphone/add-a-website-to-your-home-screen-iph42ab2f3a7/ios"
                 target="_blank"
