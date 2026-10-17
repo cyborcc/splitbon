@@ -166,4 +166,42 @@ describe('processReceiptImage fallback behavior', () => {
       }),
     );
   });
+  test.each([
+    // [case, items, subtotal, tax, tip, total, expected tax, expected subtotal]
+    ['gross prices with a VAT summary', [2000, 1150], 3150, 414, 0, 3150, 0, 3150],
+    ['gross prices, net subtotal read', [2000, 1150], 2736, 414, 0, 3150, 0, 3150],
+    ['gross prices plus a tip', [4000], 4000, 667, 400, 4400, 0, 4000],
+    ['one cent of rounding', [3149], 3149, 414, 0, 3150, 0, 3149],
+    ['net prices with sales tax on top', [1000], 1000, 80, 0, 1080, 80, 1000],
+    ['no printed total', [3150], 3150, 414, 0, 0, 414, 3150],
+    ['a missed line', [2800], 2800, 414, 0, 3150, 414, 2800],
+    ['no tax', [3150], 3150, 0, 0, 3150, 0, 3150],
+  ])('dropIncludedTax: %s', async (_name, prices, subtotal, tax, tip, total, expectedTax, expectedSubtotal) => {
+    const { dropIncludedTax } = await import('./receipt-processor');
+    const result = dropIncludedTax({ items: prices.map((totalPrice) => ({ totalPrice })), subtotal, tax, tip, total });
+    expect(result.tax).toBe(expectedTax);
+    expect(result.subtotal).toBe(expectedSubtotal);
+  });
+
+  test('processing stores tax 0 when the items already add up to the printed total', async () => {
+    // successResult: items 1080 = total 1080, with 80 of VAT printed for information
+    mockGetAIProvidersWithFallback.mockResolvedValue([
+      { name: 'test', extractReceipt: vi.fn().mockResolvedValue(successResult) },
+    ]);
+    const { processReceiptImage } = await import('./receipt-processor');
+    const db = makeDbMock();
+    const result = await processReceiptImage({
+      db: db as never,
+      receiptId: 'r',
+      receipt: { imagePath: 'r.jpg', mimeType: 'image/jpeg' },
+    });
+    expect(result).toMatchObject({ tax: 0, subtotal: 1080, total: 1080 });
+    expect(db.receipt.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          extractedData: expect.objectContaining({ tax: 0, subtotal: 1080, total: 1080 }),
+        }),
+      }),
+    );
+  });
 });

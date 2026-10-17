@@ -24,6 +24,9 @@ CRITICAL RULES:
 - quantity * unitPrice should equal totalPrice for each item
 - subtotal should equal the sum of all item totalPrices
 - total should equal subtotal + tax + tip
+- Many receipts (e.g. in Austria and Germany) print VAT-inclusive (gross) prices and a VAT summary
+  ("inkl. MwSt.", "USt", "Brutto/Netto") for information only. If the item totalPrices already add up
+  to the printed total, the tax is included: set tax to 0 and subtotal to that total.
 - If the receipt prints its final total in one or more additional currencies,
   add each printed final total to alternateTotals. Do not infer or calculate
   alternate totals: only include a value that is explicitly printed.

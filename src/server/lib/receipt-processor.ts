@@ -23,6 +23,26 @@ function providerLabel(provider: AIProvider): string {
   return typeof model === 'string' && model ? `${provider.name} (${model})` : provider.name;
 }
 
+/** Cents of rounding slack when comparing the item lines with the printed total. */
+const INCLUDED_TAX_TOLERANCE_CENTS = 2;
+
+/**
+ * VAT-inclusive receipts (e.g. Austria, Germany) print gross prices and a tax summary for information only.
+ * When the item lines already add up to the printed total, the tax is part of them and must not be added again:
+ * set tax to 0 and the subtotal to the item sum, so the receipt total, expense amount and balances stay gross.
+ */
+export function dropIncludedTax<
+  T extends { items: { totalPrice: number }[]; subtotal: number; tax: number; tip: number; total: number },
+>(extraction: T): T {
+  if (extraction.tax <= 0 || extraction.total <= 0) return extraction;
+  const itemsSum = extraction.items.reduce((sum, item) => sum + item.totalPrice, 0);
+  const itemsMatchTotal = Math.abs(itemsSum + extraction.tip - extraction.total) <= INCLUDED_TAX_TOLERANCE_CENTS;
+  const taxAddsUp =
+    Math.abs(itemsSum + extraction.tax + extraction.tip - extraction.total) <= INCLUDED_TAX_TOLERANCE_CENTS;
+  if (!itemsMatchTotal || taxAddsUp) return extraction;
+  return { ...extraction, tax: 0, subtotal: itemsSum };
+}
+
 /**
  * Shared receipt processing logic used by both authenticated and guest flows.
  * Reads the image file, calls the AI provider, creates receipt items in DB,
@@ -83,7 +103,7 @@ export async function extractReceiptImage({
   if (!result || !provider) {
     throw new Error('Receipt extraction failed across configured providers.');
   }
-  const extraction = result;
+  const extraction = dropIncludedTax(result);
   const usedProvider = provider;
 
   logger.info(`${logPrefix}.extracted`, {
@@ -91,6 +111,7 @@ export async function extractReceiptImage({
     provider: providerLabel(usedProvider),
     items: extraction.items.length,
     durationMs: Date.now() - start,
+    ...(extraction.tax !== result.tax ? { droppedIncludedTax: result.tax } : {}),
   });
 
   return { extraction, provider: providerLabel(usedProvider) };
