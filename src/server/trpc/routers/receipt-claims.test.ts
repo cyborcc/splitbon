@@ -129,7 +129,7 @@ test('general amount and conversion fields can be explicitly cleared without los
   await caller.saveForLater({ groupId: 'group', receiptId,
     tipOverride: '', paidTotalStr: '', useCharged: false, chargedStr: '', useLatestRate: false });
   const saved = await db.receipt.findUnique();
-  expect(saved.paidById).toBe('bob');
+  expect((saved as { paidById?: string | null }).paidById).toBe('bob');
   expect(saved.extractedData).toMatchObject({ receiptDraft: { title: 'Breakfast',
     tipOverride: '', paidTotalStr: '', useCharged: false, chargedStr: '', useLatestRate: false } });
 });
