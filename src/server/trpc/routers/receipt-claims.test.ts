@@ -110,13 +110,20 @@ test('saving a receipt draft preserves title, location, category and OCR before 
   await caller.saveForLater({ groupId: 'group', receiptId, date: '2026-10-13', ...receiptDraft, assignments: [] });
   const saved = await db.receipt.findUnique();
   expect(saved.extractedData).toMatchObject({
-    merchantName: 'Café Nil', merchantAddress: 'OCR address', scanProvider: 'mock',
-    total: 1000, items: [], date: '2026-10-13', dateSource: 'manual', receiptDraft,
+    merchantName: 'Café Nil',
+    merchantAddress: 'OCR address',
+    scanProvider: 'mock',
+    total: 1000,
+    items: [],
+    date: '2026-10-13',
+    dateSource: 'manual',
+    receiptDraft,
   });
   await caller.startClaimRequest({ receiptId });
-  expect(sendNotifications).toHaveBeenCalledWith(db, expect.arrayContaining([
-    expect.objectContaining({ vars: expect.objectContaining({ title: receiptDraft.title }) }),
-  ]));
+  expect(sendNotifications).toHaveBeenCalledWith(
+    db,
+    expect.arrayContaining([expect.objectContaining({ vars: expect.objectContaining({ title: receiptDraft.title }) })]),
+  );
   // Older callers saving just the payer/date must not erase the saved metadata.
   await caller.saveForLater({ groupId: 'group', receiptId, date: '2026-10-14' });
   expect((await db.receipt.findUnique()).extractedData).toMatchObject({ receiptDraft });
@@ -124,25 +131,55 @@ test('saving a receipt draft preserves title, location, category and OCR before 
 
 test('general amount and conversion fields can be explicitly cleared without losing other draft data', async () => {
   const { caller, db, receiptId } = fixture();
-  await caller.saveForLater({ groupId: 'group', receiptId, title: 'Breakfast', paidById: 'bob',
-    tipOverride: '2.50', paidTotalStr: '12.50', useCharged: true, chargedStr: '11.25', useLatestRate: true });
-  await caller.saveForLater({ groupId: 'group', receiptId,
-    tipOverride: '', paidTotalStr: '', useCharged: false, chargedStr: '', useLatestRate: false });
+  await caller.saveForLater({
+    groupId: 'group',
+    receiptId,
+    title: 'Breakfast',
+    paidById: 'bob',
+    tipOverride: '2.50',
+    paidTotalStr: '12.50',
+    useCharged: true,
+    chargedStr: '11.25',
+    useLatestRate: true,
+  });
+  await caller.saveForLater({
+    groupId: 'group',
+    receiptId,
+    tipOverride: '',
+    paidTotalStr: '',
+    useCharged: false,
+    chargedStr: '',
+    useLatestRate: false,
+  });
   const saved = await db.receipt.findUnique();
   expect((saved as { paidById?: string | null }).paidById).toBe('bob');
-  expect(saved.extractedData).toMatchObject({ receiptDraft: { title: 'Breakfast',
-    tipOverride: '', paidTotalStr: '', useCharged: false, chargedStr: '', useLatestRate: false } });
+  expect(saved.extractedData).toMatchObject({
+    receiptDraft: {
+      title: 'Breakfast',
+      tipOverride: '',
+      paidTotalStr: '',
+      useCharged: false,
+      chargedStr: '',
+      useLatestRate: false,
+    },
+  });
 });
 
 test('draft metadata supports explicitly clearing the location', async () => {
   const { caller, db, receiptId } = fixture();
-  await caller.saveForLater({ groupId: 'group', receiptId, title: 'Breakfast',
-    place: { placeName: 'Terrace', latitude: 30.1, longitude: 31.2 } });
-  await caller.saveForLater({ groupId: 'group', receiptId,
-    place: { placeName: '', latitude: null, longitude: null } });
-  expect((await db.receipt.findUnique()).extractedData).toMatchObject({ receiptDraft: {
-    title: 'Breakfast', place: { placeName: '', latitude: null, longitude: null },
-  } });
+  await caller.saveForLater({
+    groupId: 'group',
+    receiptId,
+    title: 'Breakfast',
+    place: { placeName: 'Terrace', latitude: 30.1, longitude: 31.2 },
+  });
+  await caller.saveForLater({ groupId: 'group', receiptId, place: { placeName: '', latitude: null, longitude: null } });
+  expect((await db.receipt.findUnique()).extractedData).toMatchObject({
+    receiptDraft: {
+      title: 'Breakfast',
+      place: { placeName: '', latitude: null, longitude: null },
+    },
+  });
 });
 
 test('starting a request marks the receipt and notifies every other member', async () => {

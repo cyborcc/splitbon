@@ -3,11 +3,13 @@ import { TRPCError } from '@trpc/server';
 
 export const receiptDraftSchema = z.object({
   title: z.string().max(200).optional(),
-  place: z.object({
-    placeName: z.string().max(500),
-    latitude: z.number().min(-90).max(90).nullable(),
-    longitude: z.number().min(-180).max(180).nullable(),
-  }).optional(),
+  place: z
+    .object({
+      placeName: z.string().max(500),
+      latitude: z.number().min(-90).max(90).nullable(),
+      longitude: z.number().min(-180).max(180).nullable(),
+    })
+    .optional(),
   category: z.string().max(50).optional(),
   tipOverride: z.string().max(50).optional(),
   paidTotalStr: z.string().max(50).optional(),

@@ -386,7 +386,9 @@ function ScanReceiptContent({ params }: { params: Promise<{ groupId: string }> }
                       data-testid="start-claim-request-btn"
                     >
                       <BellRing className="mr-2 h-4 w-4" />
-                      {preparingClaim || startClaimRequest.isPending ? t('claimRequestSending') : t('startClaimRequest')}
+                      {preparingClaim || startClaimRequest.isPending
+                        ? t('claimRequestSending')
+                        : t('startClaimRequest')}
                     </Button>
                     {claimRequestReason && (
                       <p className="text-xs text-amber-600 dark:text-amber-400" data-testid="claim-request-reason">
@@ -398,7 +400,10 @@ function ScanReceiptContent({ params }: { params: Promise<{ groupId: string }> }
               </CardContent>
             </Card>
           )}
-          <fieldset disabled={correctionBlocked || preparingClaim} className={correctionBlocked ? 'pointer-events-none opacity-60' : ''}>
+          <fieldset
+            disabled={correctionBlocked || preparingClaim}
+            className={correctionBlocked ? 'pointer-events-none opacity-60' : ''}
+          >
             {editExpenseId && !editExpense.data ? (
               <LoadingSpinner />
             ) : (

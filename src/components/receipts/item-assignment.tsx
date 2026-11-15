@@ -505,9 +505,17 @@ export function ItemAssignment({
       const picks = Object.entries(assignments).flatMap(([receiptItemId, userIds]) =>
         Array.from(userIds).map((userId) => ({ receiptItemId, userId, units: counts[receiptItemId]?.[userId] ?? 1 })),
       );
-      return new Map(members.map((member) => [member.id, claimShare({
-        items, claims: picks, userId: member.id, extra: (extracted?.tax ?? 0) + tip,
-      })]));
+      return new Map(
+        members.map((member) => [
+          member.id,
+          claimShare({
+            items,
+            claims: picks,
+            userId: member.id,
+            extra: (extracted?.tax ?? 0) + tip,
+          }),
+        ]),
+      );
     }
     // Build member-id -> index mapping for calculateSplitTotals
     const memberIdToIndex = new Map<string, number>();
@@ -543,9 +551,16 @@ export function ItemAssignment({
     return totals;
   }, [items, assignments, counts, members, extracted, tip, claims.data?.requestedAt, claimsManuallyAdjusted]);
   const assignedItemCount = Object.values(assignments).filter((s) => s.size > 0).length;
-  const automaticPicksComplete = !claims.data?.requestedAt || claimsManuallyAdjusted || items.every((item) =>
-    openUnits(item.quantity, Array.from(assignments[item.id] ?? []).map((userId) => ({ units: countOf(item.id, userId) }))) === 0,
-  );
+  const automaticPicksComplete =
+    !claims.data?.requestedAt ||
+    claimsManuallyAdjusted ||
+    items.every(
+      (item) =>
+        openUnits(
+          item.quantity,
+          Array.from(assignments[item.id] ?? []).map((userId) => ({ units: countOf(item.id, userId) })),
+        ) === 0,
+    );
   const allAssigned = items.length > 0 && assignedItemCount === items.length && automaticPicksComplete;
 
   if (receiptData.isLoading) {

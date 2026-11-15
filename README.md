@@ -95,17 +95,17 @@ Splitbon also has a built-in **How it works** page with short videos, and a feed
 
 All nine language packs contain the same **1,215 UI keys** and are checked by `npm run lint:i18n`. The coverage figure shows the share of UI strings that differs from the English source; brand names and technical terms may deliberately remain English.
 
-| Language             | Status       | UI text distinct from English |
-| -------------------- | ------------ | ----------------------------- |
-| English              | ✅ Source     | —                             |
-| German               | ✅ Complete   | `██████████` 95.6%            |
-| Spanish              | ✅ Complete   | `██████████` 97.7%            |
-| Swedish              | ✅ Complete   | `██████████` 97.3%            |
-| French               | ✅ Complete   | `██████████` 97.0%            |
-| Portuguese (BR)      | ✅ Complete   | `██████████` 97.4%            |
-| Japanese             | ✅ Complete   | `██████████` 98.7%            |
-| Chinese (Simplified) | ✅ Complete   | `██████████` 99.1%            |
-| Korean               | ✅ Complete   | `██████████` 98.8%            |
+| Language             | Status      | UI text distinct from English |
+| -------------------- | ----------- | ----------------------------- |
+| English              | ✅ Source   | —                             |
+| German               | ✅ Complete | `██████████` 95.6%            |
+| Spanish              | ✅ Complete | `██████████` 97.7%            |
+| Swedish              | ✅ Complete | `██████████` 97.3%            |
+| French               | ✅ Complete | `██████████` 97.0%            |
+| Portuguese (BR)      | ✅ Complete | `██████████` 97.4%            |
+| Japanese             | ✅ Complete | `██████████` 98.7%            |
+| Chinese (Simplified) | ✅ Complete | `██████████` 99.1%            |
+| Korean               | ✅ Complete | `██████████` 98.8%            |
 
 Run `npm run lint:i18n` after changing messages to verify that every language pack still has the same keys as English.
 

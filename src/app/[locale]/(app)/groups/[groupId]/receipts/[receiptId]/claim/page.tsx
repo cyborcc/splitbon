@@ -328,7 +328,9 @@ export default function ClaimReceiptPage({ params }: { params: Promise<{ groupId
                 </span>
               </button>
               <div className="flex shrink-0 flex-col items-end gap-1">
-                <span className="text-sm font-semibold tabular-nums" data-testid={`claim-price-${item.id}`}>{fmt(shownPrice)}</span>
+                <span className="text-sm font-semibold tabular-nums" data-testid={`claim-price-${item.id}`}>
+                  {fmt(shownPrice)}
+                </span>
                 {fmtGroup(shownPrice) && (
                   <span className="text-xs tabular-nums text-muted-foreground">≈ {fmtGroup(shownPrice)}</span>
                 )}

@@ -1112,11 +1112,13 @@ export const receiptsRouter = createTRPCRouter({
         paidById: z.string().nullable().optional(),
         date: receiptDateInput.optional(),
         title: z.string().max(200).optional(),
-        place: z.object({
-          placeName: z.string().max(500),
-          latitude: z.number().min(-90).max(90).nullable(),
-          longitude: z.number().min(-180).max(180).nullable(),
-        }).optional(),
+        place: z
+          .object({
+            placeName: z.string().max(500),
+            latitude: z.number().min(-90).max(90).nullable(),
+            longitude: z.number().min(-180).max(180).nullable(),
+          })
+          .optional(),
         category: z.string().max(50).optional(),
         tipOverride: z.string().max(50).optional(),
         paidTotalStr: z.string().max(50).optional(),
@@ -1187,7 +1189,15 @@ export const receiptsRouter = createTRPCRouter({
           data: {
             groupId: input.groupId,
             savedById: ctx.user.id,
-            ...(input.date || input.title !== undefined || input.place !== undefined || input.category !== undefined || input.tipOverride !== undefined || input.paidTotalStr !== undefined || input.useCharged !== undefined || input.chargedStr !== undefined || input.useLatestRate !== undefined
+            ...(input.date ||
+            input.title !== undefined ||
+            input.place !== undefined ||
+            input.category !== undefined ||
+            input.tipOverride !== undefined ||
+            input.paidTotalStr !== undefined ||
+            input.useCharged !== undefined ||
+            input.chargedStr !== undefined ||
+            input.useLatestRate !== undefined
               ? {
                   extractedData: {
                     ...parseExtractedData(receipt.extractedData),
