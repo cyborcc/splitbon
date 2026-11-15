@@ -29,6 +29,8 @@
     "venmoPaymentConfirm": "{name}에게 {amount}의 Venmo 결제를 완료하셨나요?",
     "settledViaVenmo": "Venmo로 결제 완료",
     "payViaPaypal": "PayPal로 결제",
+    "payViaPaypalEmail": "Pay via PayPal (e-mail, with reference)",
+    "referenceCopied": "Reference copied: “{reference}”. Paste it in PayPal.",
     "paypalPaymentConfirm": "{name}에게 {amount}의 PayPal 결제를 완료하셨나요?",
     "settledViaPaypal": "PayPal로 결제 완료",
     "payViaBank": "계좌 이체",

@@ -29,6 +29,8 @@
     "venmoPaymentConfirm": "Avez-vous effectué le paiement Venmo de {amount} à {name}?",
     "settledViaVenmo": "Payé via Venmo",
     "payViaPaypal": "Payer via PayPal",
+    "payViaPaypalEmail": "Pay via PayPal (e-mail, with reference)",
+    "referenceCopied": "Reference copied: “{reference}”. Paste it in PayPal.",
     "paypalPaymentConfirm": "Avez-vous effectué le paiement PayPal de {amount} à {name}?",
     "settledViaPaypal": "Payé via PayPal",
     "payViaBank": "Virement bancaire",

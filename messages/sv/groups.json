@@ -29,6 +29,8 @@
     "venmoPaymentConfirm": "Slutförde du Venmo-betalningen på {amount} till {name}?",
     "settledViaVenmo": "Betald via Venmo",
     "payViaPaypal": "Betala via PayPal",
+    "payViaPaypalEmail": "Pay via PayPal (e-mail, with reference)",
+    "referenceCopied": "Reference copied: “{reference}”. Paste it in PayPal.",
     "paypalPaymentConfirm": "Slutförde du PayPal-betalningen på {amount} till {name}?",
     "settledViaPaypal": "Betald via PayPal",
     "payViaBank": "Banköverföring",

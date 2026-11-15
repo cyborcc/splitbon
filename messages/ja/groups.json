@@ -29,6 +29,8 @@
     "venmoPaymentConfirm": "{name}への{amount}のVenmo支払いを完了しましたか？",
     "settledViaVenmo": "Venmoで支払い済み",
     "payViaPaypal": "PayPalで支払う",
+    "payViaPaypalEmail": "Pay via PayPal (e-mail, with reference)",
+    "referenceCopied": "Reference copied: “{reference}”. Paste it in PayPal.",
     "paypalPaymentConfirm": "{name}への{amount}のPayPal支払いを完了しましたか？",
     "settledViaPaypal": "PayPalで支払い済み",
     "payViaBank": "銀行振込",

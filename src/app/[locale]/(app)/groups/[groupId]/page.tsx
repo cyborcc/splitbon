@@ -151,11 +151,20 @@ export default function GroupDetailPage({ params }: { params: Promise<{ groupId:
     window.open(url, '_blank', 'noopener,noreferrer');
     setExternalPayment({ debt, toName, kind, currency: g.currency });
   }
+  // Verwendungszweck: Gruppenname, Zahler -> Empfaenger (z.B. "Urlaub Stefan → Alex")
+  function paymentReference(debt: { from: string; to: string }) {
+    const nameOf = (id: string) => {
+      const u = memberMap.get(id);
+      const full = u?.placeholderName ?? u?.name ?? u?.email?.split('@')[0] ?? '?';
+      return full.trim().split(/\s+/)[0] ?? full;
+    };
+    return `${g.name} ${nameOf(debt.from)} → ${nameOf(debt.to)}`;
+  }
   // Ways the signed-in person can pay a debt of theirs: what the receiver has saved, as ready-made links
   function paymentOptions(debt: { from: string; to: string; amount: number }) {
     const to = memberMap.get(debt.to);
     const isMyDebt = debt.from === authSession?.user?.id;
-    const reference = `Splitbon: ${g.name}`;
+    const reference = paymentReference(debt);
     const showVenmo =
       venmoSetting.data?.enabled &&
       g.currency === 'USD' &&
@@ -163,20 +172,21 @@ export default function GroupDetailPage({ params }: { params: Promise<{ groupId:
       to?.venmoUsername &&
       isValidVenmoHandle(to.venmoUsername);
     const venmoUrl = showVenmo ? buildVenmoPayUrl(to.venmoUsername!, debt.amount, reference) : null;
-    const paypalUrl =
-      isMyDebt && to
-        ? ((to.paypalMeName ? buildPaypalMeUrl(to.paypalMeName, debt.amount, g.currency) : null) ??
-          (to.paypalEmail && isValidPaypalEmail(to.paypalEmail)
-            ? buildPaypalEmailUrl(to.paypalEmail, debt.amount, g.currency, reference)
-            : null))
+    // PayPal.me kann keinen Verwendungszweck per Link, daher zusaetzlich die E-Mail-Variante (mit item_name)
+    const paypalMeUrl =
+      isMyDebt && to?.paypalMeName ? buildPaypalMeUrl(to.paypalMeName, debt.amount, g.currency) : null;
+    const paypalEmailUrl =
+      isMyDebt && to?.paypalEmail && isValidPaypalEmail(to.paypalEmail)
+        ? buildPaypalEmailUrl(to.paypalEmail, debt.amount, g.currency, reference)
         : null;
+    const paypalUrl = paypalMeUrl ?? paypalEmailUrl;
     const bankIban = isMyDebt && to?.iban && isValidIban(to.iban) ? to.iban : null;
-    return { isMyDebt, venmoUrl, paypalUrl, bankIban };
+    return { isMyDebt, venmoUrl, paypalUrl, paypalMeUrl, paypalEmailUrl, reference, bankIban };
   }
   // Pay buttons inside the settle dialog, so the way to pay is found where "Zahlung erfassen" is opened
   function settleActions(from: string, to: string, amount: number) {
     const debt = { from, to, amount };
-    const { isMyDebt, venmoUrl, paypalUrl, bankIban } = paymentOptions(debt);
+    const { isMyDebt, venmoUrl, paypalUrl, paypalMeUrl, paypalEmailUrl, reference, bankIban } = paymentOptions(debt);
     if (!isMyDebt) return null;
     const receiver = memberMap.get(to);
     const toName = receiver?.name ?? receiver?.email ?? t('detail.unknown');
@@ -187,19 +197,44 @@ export default function GroupDetailPage({ params }: { params: Promise<{ groupId:
             type="button"
             size="lg"
             className="h-auto min-h-20 justify-start gap-3 px-4 py-3 text-left"
-            disabled={!paypalUrl || !!externalPayment || settleVenmo.isPending}
+            disabled={!paypalMeUrl || !!externalPayment || settleVenmo.isPending}
             data-testid="settle-pay-paypal"
             onClick={() => {
-              if (!paypalUrl) return;
+              if (!paypalMeUrl) return;
+              // PayPal.me nimmt keinen Zweck per Link: in die Zwischenablage, zum Einfuegen bei PayPal
+              void navigator.clipboard?.writeText(reference).then(
+                () => toast.success(t('detail.referenceCopied', { reference })),
+                () => undefined,
+              );
               setSettleState((st) => ({ ...st, open: false }));
-              startExternalPayment(paypalUrl, debt, toName, 'paypal');
+              startExternalPayment(paypalMeUrl, debt, toName, 'paypal');
             }}
           >
             <CreditCard className="h-5 w-5 shrink-0" />
             <span className="flex flex-col items-start gap-0.5">
               <span>{t('detail.payViaPaypal')}</span>
               <span className="text-xs font-normal opacity-80">
-                {paypalUrl ? toName : t('detail.noPaymentData', { name: toName })}
+                {paypalMeUrl ? toName : t('detail.noPaymentData', { name: toName })}
+              </span>
+            </span>
+          </Button>
+          <Button
+            type="button"
+            size="lg"
+            className="h-auto min-h-20 justify-start gap-3 px-4 py-3 text-left"
+            disabled={!paypalEmailUrl || !!externalPayment || settleVenmo.isPending}
+            data-testid="settle-pay-paypal-email"
+            onClick={() => {
+              if (!paypalEmailUrl) return;
+              setSettleState((st) => ({ ...st, open: false }));
+              startExternalPayment(paypalEmailUrl, debt, toName, 'paypal');
+            }}
+          >
+            <CreditCard className="h-5 w-5 shrink-0" />
+            <span className="flex flex-col items-start gap-0.5">
+              <span>{t('detail.payViaPaypalEmail')}</span>
+              <span className="text-xs font-normal opacity-80">
+                {paypalEmailUrl ? toName : t('detail.noPaymentData', { name: toName })}
               </span>
             </span>
           </Button>
@@ -609,7 +644,7 @@ export default function GroupDetailPage({ params }: { params: Promise<{ groupId:
           iban={bankTransfer.iban}
           amountCents={bankTransfer.amount}
           currency={g.currency}
-          reference={`Splitbon: ${g.name}`}
+          reference={paymentReference({ from: bankTransfer.fromId, to: bankTransfer.toId })}
           pending={settleVenmo.isPending}
           onPaid={() => {
             if (settleVenmo.isPending) return;

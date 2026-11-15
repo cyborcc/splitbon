@@ -29,6 +29,8 @@
     "venmoPaymentConfirm": "您是否完成了通过Venmo向{name}支付{amount}？",
     "settledViaVenmo": "已通过Venmo支付",
     "payViaPaypal": "通过PayPal支付",
+    "payViaPaypalEmail": "Pay via PayPal (e-mail, with reference)",
+    "referenceCopied": "Reference copied: “{reference}”. Paste it in PayPal.",
     "paypalPaymentConfirm": "您是否完成了通过PayPal向{name}支付{amount}？",
     "settledViaPaypal": "已通过PayPal支付",
     "payViaBank": "银行转账",
